@@ -27,6 +27,9 @@ public abstract record TResultAsync<A>
     public abstract TResultAsync<B> Map<B>(Func<A, B> f);
     public abstract TResultAsync<B> Bind<B>(Func<A, TResultAsync<B>> f);
     public abstract ValueTask<TResultAsync<S>> Reduce<S>(TState state, S stateValue, ReducerAsync<S, A> reducer);
+
+    public static implicit operator ValueTask<TResultAsync<A>>(TResultAsync<A> x) =>
+        new(x);
 }
 public record TContinueAsync<A>(A Value) : TResultAsync<A>
 {

@@ -1,35 +1,6 @@
 ﻿#nullable enable
 namespace LanguageExt;
 
-record SelectManyTransducer1<A, B, C>(Transducer<A, B> F, Func<B, Transducer<A, C>> BindF) : 
-    Transducer<A, C>
-{
-    public override Reducer<S, A> Transform<S>(Reducer<S, C> reduce) =>
-        new Reduce<S>(F, BindF, reduce);
-
-    public override TransducerAsync<A, C> ToAsync() =>
-        new SelectManyTransducerAsync1<A, B, C>(F.ToAsync(), x => BindF(x).ToAsync());
-
-    record Reduce<S>(Transducer<A, B> F, Func<B, Transducer<A, C>> Bind, Reducer<S, C> Reducer) : 
-        Reducer<S, A>
-    {
-        public override TResult<S> Run(TState st, S s, A x) =>
-            TResult.Recursive(st, s, x, F.Transform(new Binder<S>(x, Bind, Reducer)));
-
-        public override ReducerAsync<S, A> ToAsync() =>
-            new SelectManyTransducerAsync1<A, B, C>.Reduce<S>(F.ToAsync(), x => Bind(x).ToAsync(), Reducer.ToAsync());
-    }
-
-    record Binder<S>(A Value, Func<B, Transducer<A, C>> Bind, Reducer<S, C> Reducer) :
-        Reducer<S, B>
-    {
-        public override TResult<S> Run(TState st, S s, B b) =>
-            Bind(b).Transform(Reducer).Run(st, s, Value);
-
-        public override ReducerAsync<S, B> ToAsync() =>
-            new SelectManyTransducerAsync1<A, B, C>.Binder<S>(Value, x => Bind(x).ToAsync(), Reducer.ToAsync());
-    }
-}
 
 record SelectManyTransducer2<A, B, C, D>(
     Transducer<A, B> F, 

@@ -14,7 +14,7 @@ public interface Functor<F> where F : Functor<F>
     /// <summary>
     /// Map from `A -> B` to `A -> C` 
     /// </summary>
-    public static K<F, A, C> Map<A, B, C>(K<F, A, B> fab, Func<B, C> f) =>
+    public static virtual K<F, A, C> Map<A, B, C>(K<F, A, B> fab, Func<B, C> f) =>
         F.Map(fab, Transducer.lift(f));
 }
 
@@ -33,6 +33,6 @@ public interface Functor<F, A> where F : Functor<F, A>
     /// <summary>
     /// Map from `A->B` to `A->C` 
     /// </summary>
-    public static K<F, A, C> Map<B, C>(K<F, A, B> fab, Func<B, C> f) =>
+    public static virtual K<F, A, C> Map<B, C>(K<F, A, B> fab, Func<B, C> f) =>
         F.Map(fab, Transducer.lift(f));
 }

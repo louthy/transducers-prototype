@@ -14,6 +14,7 @@ public interface K<F, A, B>
     Transducer<A, B> Morphism { get; }
 }
 
+/*
 public interface K<F, X, Y, A, B> : K<F, A, B>
 {
     /// <summary>
@@ -21,3 +22,4 @@ public interface K<F, X, Y, A, B> : K<F, A, B>
     /// </summary>
     Transducer<Sum<X, A>, Sum<Y, B>> SumMorphism { get; }
 }
+*/

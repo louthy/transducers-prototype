@@ -1,27 +1,6 @@
 ﻿#nullable enable
 namespace LanguageExt;
 
-record SelectManyTransducerAsync1<A, B, C>(TransducerAsync<A, B> F, Func<B, TransducerAsync<A, C>> BindF) : 
-    TransducerAsync<A, C>
-{
-    public override ReducerAsync<S, A> Transform<S>(ReducerAsync<S, C> reduce) =>
-        new Reduce<S>(F, BindF, reduce);
-
-    internal record Reduce<S>(TransducerAsync<A, B> F, Func<B, TransducerAsync<A, C>> Bind, ReducerAsync<S, C> Reducer) : 
-        ReducerAsync<S, A>
-    {
-        public override ValueTask<TResultAsync<S>> Run(TState st, S s, A x) =>
-            F.Transform(new Binder<S>(x, Bind, Reducer)).Run(st, s, x);
-    }
-
-    internal record Binder<S>(A Value, Func<B, TransducerAsync<A, C>> Bind, ReducerAsync<S, C> Reducer) :
-        ReducerAsync<S, B>
-    {
-        public override ValueTask<TResultAsync<S>> Run(TState st, S s, B b) =>
-            Bind(b).Transform(Reducer).Run(st, s, Value);
-    }
-}
-
 record SelectManyTransducerAsync2<A, B, C, D>(TransducerAsync<A, B> F, Func<B, TransducerAsync<A, C>> BindF, Func<B, C, D> Project) : 
     TransducerAsync<A, D>
 {
@@ -79,7 +58,7 @@ record SelectManyTransducerAsyncSync3<A, B, C, D>(
     internal record BindApply<S>(A ValueX, B ValueY, Func<B, C, D> Project, ReducerAsync<S, D> Reducer) : ReducerAsync<S, Transducer<A, C>>
     {
         public override ValueTask<TResultAsync<S>> Run(TState st, S s, Transducer<A, C> t) =>
-            new(TResultAsync.Recursive(st, s, ValueX, t.ToAsync().Transform(new Projector<S>(ValueY, Project, Reducer))));
+            TResultAsync.Recursive(st, s, ValueX, t.ToAsync().Transform(new Projector<S>(ValueY, Project, Reducer)));
     }
 
     internal record Projector<S>(B Value, Func<B, C, D> Project, ReducerAsync<S, D> Reducer) :

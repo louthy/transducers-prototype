@@ -5,6 +5,12 @@ namespace LanguageExt;
 
 public static partial class Transducer
 {
+    /// <summary>
+    /// Lift a value into the `Transducer` space
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <typeparam name="A">Value type</typeparam>
+    /// <returns>`Transducer` from `Unit` to `A`</returns>
     public static Transducer<Unit, A> Pure<A>(A value) =>
         constant<Unit, A>(value);
 
@@ -14,6 +20,16 @@ public static partial class Transducer
     public static Transducer<A, A> identity<A>() =>
         IdentityTransducer<A>.Default;
 
+    /// <summary>
+    /// Constant transducer
+    /// </summary>
+    /// <remarks>
+    /// Takes any value, ignores it and yields the value provided.
+    /// </remarks>
+    /// <param name="value">Constant value to yield</param>
+    /// <typeparam name="A">Input value type</typeparam>
+    /// <typeparam name="B">Constant value type</typeparam>
+    /// <returns>`Transducer` from `A` to `B`</returns>
     public static Transducer<A, B> constant<A, B>(B value) =>
         new ConstantTransducer<A, B>(value);
     
@@ -121,4 +137,28 @@ public static partial class Transducer
         Transducer<A, Func<B, C>> ff,
         Transducer<A, B> fa) =>
         new ApplyTransducer<A, B, C>(ff, fa);
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static Transducer<A, C> bind<A, B, C>(
+        Transducer<A, B> m,
+        Transducer<B, Transducer<A, C>> f) =>
+        new BindTransducer1<A, B, C>(m, f);
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static Transducer<A, C> bind<A, B, C>(
+        Transducer<A, B> m,
+        Transducer<B, Func<A, C>> f) =>
+        new BindTransducer2<A, B, C>(m, f);
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static Transducer<A, C> bind<A, B, C>(
+        Transducer<A, B> m,
+        Func<B, Transducer<A, C>> f) =>
+        new BindTransducer3<A, B, C>(m, f);
 }

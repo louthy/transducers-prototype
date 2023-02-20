@@ -14,13 +14,13 @@ public interface Applicative<F> : Functor<F>
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static sealed K<F, A, B> Lift<A, B>(Func<A, B> f) =>
+    public static virtual K<F, A, B> Lift<A, B>(Func<A, B> f) =>
         F.Lift(Transducer.lift(f));
 
     /// <summary>
     /// Pure constructor
     /// </summary>
-    public static sealed K<F, A, B> Pure<A, B>(B value) =>
+    public static virtual K<F, A, B> Pure<A, B>(B value) =>
         F.Lift(Transducer.constant<A, B>(value));
 }
 
@@ -38,12 +38,12 @@ public interface Applicative<F, A> : Functor<F, A>
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static sealed K<F, A, B> Lift<B>(Func<A, B> f) =>
+    public static virtual K<F, A, B> Lift<B>(Func<A, B> f) =>
         F.Lift(Transducer.lift(f));
 
     /// <summary>
     /// Pure constructor
     /// </summary>
-    public static sealed K<F, A, B> Pure<B>(B value) =>
+    public static virtual K<F, A, B> Pure<B>(B value) =>
         F.Lift(Transducer.constant<A, B>(value));
 }

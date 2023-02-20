@@ -3,8 +3,8 @@
 /// <summary>
 /// Applicative trait
 /// </summary>
-public interface SumApply<F> : SumFunctor<F> 
-    where F : SumApply<F>
+public interface ApplySum<F> : FunctorSum<F> 
+    where F : ApplySum<F>
 {
     /// <summary>
     /// Applicative apply
@@ -17,8 +17,8 @@ public interface SumApply<F> : SumFunctor<F>
 /// <summary>
 /// Applicative trait with fixed left type
 /// </summary>
-public interface SumApply<F, X> : SumFunctor<F, X> 
-    where F : SumApply<F, X>
+public interface ApplySum<F, X> : FunctorSum<F, X> 
+    where F : ApplySum<F, X>
 {
     /// <summary>
     /// Applicative apply
@@ -31,8 +31,8 @@ public interface SumApply<F, X> : SumFunctor<F, X>
 /// <summary>
 /// Applicative trait with fixed input type
 /// </summary>
-public interface SumApply<F, X, A> : SumFunctor<F, X, A> 
-    where F : SumApply<F, X, A>
+public interface ApplySum<F, X, A> : FunctorSum<F, X, A> 
+    where F : ApplySum<F, X, A>
 {
     /// <summary>
     /// Applicative apply

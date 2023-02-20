@@ -46,14 +46,21 @@ public abstract record Transducer<A, B>
     /// </summary>
     /// <returns>Monadic bound transducer</returns>
     public Transducer<A, C> Bind<C>(Func<B, Transducer<A, C>> g) =>
-        new SelectManyTransducer1<A, B, C>(this, g);
+        new BindTransducer3<A, B, C>(this, g);
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public Transducer<A, C> Bind<C>(Transducer<B, Transducer<A, C>> g) =>
+        new BindTransducer1<A, B, C>(this, g);
 
     /// <summary>
     /// Projects every value into the monadic bind function provided. 
     /// </summary>
     /// <returns>Monadic bound transducer</returns>
     public Transducer<A, C> SelectMany<C>(Func<B, Transducer<A, C>> g) =>
-        new SelectManyTransducer1<A, B, C>(this, g);
+        new BindTransducer3<A, B, C>(this, g);
     
     /// <summary>
     /// Projects every value into the monadic bind function provided. 

@@ -4,7 +4,7 @@
 /// Sum-functor trait
 /// </summary>
 /// <typeparam name="F">Sum-functor type</typeparam>
-public interface SumFunctor<F> where F : SumFunctor<F>
+public interface FunctorSum<F> where F : FunctorSum<F>
 {
     /// <summary>
     /// Map from `X|A -> Y|B` to `X|A -> Y|B -> Z|C` 
@@ -17,7 +17,7 @@ public interface SumFunctor<F> where F : SumFunctor<F>
     /// <summary>
     /// Map from `X|A - >Y|B` to `X|A -> Y|B -> Z|C` 
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<Z, C>> BiMap<X, Y, Z, A, B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<Z, C>> BiMap<X, Y, Z, A, B, C>(
         K<F, Sum<X, A>, Sum<Y, B>> fab,
         Func<Y, Z> Left,
         Func<B, C> Right) =>
@@ -26,7 +26,7 @@ public interface SumFunctor<F> where F : SumFunctor<F>
     /// <summary>
     /// Map right: from `X|A -> Y|B` to `X|A -> Y|B -> Y|C`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<Y, C>> MapRight<X, Y, A, B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<Y, C>> MapRight<X, Y, A, B, C>(
         K<F, Sum<X, A>, Sum<Y, B>> fab, 
         Func<B, C> Right) =>
         F.BiMap(fab, Transducer.identity<Y>(), Transducer.lift(Right));
@@ -34,7 +34,7 @@ public interface SumFunctor<F> where F : SumFunctor<F>
     /// <summary>
     /// Map right: from `X|A -> Y|B` to `X|A -> Y|B -> Y|C`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<Y, C>> MapRight<X, Y, A, B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<Y, C>> MapRight<X, Y, A, B, C>(
         K<F, Sum<X, A>, Sum<Y, B>> fab, 
         Transducer<B, C> Right) =>
         F.BiMap(fab, Transducer.identity<Y>(), Right);  
@@ -42,7 +42,7 @@ public interface SumFunctor<F> where F : SumFunctor<F>
     /// <summary>
     /// Map left: from `X|A -> Y|B` to `X|A -> Y|B -> Z|B`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<Z, B>> MapLeft<X, Y, Z, A, B>(
+    public static virtual K<F, Sum<X, A>, Sum<Z, B>> MapLeft<X, Y, Z, A, B>(
         K<F, Sum<X, A>, Sum<Y, B>> fab, 
         Func<Y, Z> Left) =>
         F.BiMap(fab, Transducer.lift(Left), Transducer.identity<B>());
@@ -50,7 +50,7 @@ public interface SumFunctor<F> where F : SumFunctor<F>
     /// <summary>
     /// Map left: from `X|A -> Y|B` to `X|A -> Y|B -> Z|B`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<Z, B>> MapLeft<X, Y, Z, A, B>(
+    public static virtual K<F, Sum<X, A>, Sum<Z, B>> MapLeft<X, Y, Z, A, B>(
         K<F, Sum<X, A>, Sum<Y, B>> fab, 
         Transducer<Y, Z> Left) =>
         F.BiMap(fab, Left, Transducer.identity<B>());
@@ -61,7 +61,7 @@ public interface SumFunctor<F> where F : SumFunctor<F>
 /// </summary>
 /// <typeparam name="F">Bi-functor type</typeparam>
 /// <typeparam name="X">Constrained left type</typeparam>
-public interface SumFunctor<F, X> where F : SumFunctor<F, X>
+public interface FunctorSum<F, X> where F : FunctorSum<F, X>
 {
     /// <summary>
     /// Map from `X|A -> Y|B` to `X|A -> Y|B -> Z|C` 
@@ -74,7 +74,7 @@ public interface SumFunctor<F, X> where F : SumFunctor<F, X>
     /// <summary>
     /// Map from `X|A -> Y|B` to `X|A -> Y|B -> Z|C` 
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, C>> BiMap<A, B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<X, C>> BiMap<A, B, C>(
         K<F, Sum<X, A>, Sum<X, B>> fab,
         Func<X, X> Left,
         Func<B, C> Right) =>
@@ -83,7 +83,7 @@ public interface SumFunctor<F, X> where F : SumFunctor<F, X>
     /// <summary>
     /// Map right: from `X|A -> X|B` to `X|A -> X|B -> X|C`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, C>> MapRight<A, B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<X, C>> MapRight<A, B, C>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Func<B, C> Right) =>
         F.BiMap(fab, Transducer.identity<X>(), Transducer.lift(Right));
@@ -91,7 +91,7 @@ public interface SumFunctor<F, X> where F : SumFunctor<F, X>
     /// <summary>
     /// Map right: from `X|A -> X|B` to `X|A -> X|B -> X|C`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, C>> MapRight<A, B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<X, C>> MapRight<A, B, C>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Transducer<B, C> Right) =>
         F.BiMap(fab, Transducer.identity<X>(), Right);
@@ -99,7 +99,7 @@ public interface SumFunctor<F, X> where F : SumFunctor<F, X>
     /// <summary>
     /// Map left: from `X|A -> X|B` to `X|A -> X|B -> X|B`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, B>> MapLeft<A, B>(
+    public static virtual K<F, Sum<X, A>, Sum<X, B>> MapLeft<A, B>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Func<X, X> Left) =>
         F.BiMap(fab, Transducer.lift(Left), Transducer.identity<B>());
@@ -107,7 +107,7 @@ public interface SumFunctor<F, X> where F : SumFunctor<F, X>
     /// <summary>
     /// Map left: from `X|A -> X|B` to `X|A -> X|B -> X|B`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, B>> MapLeft<A, B>(
+    public static virtual K<F, Sum<X, A>, Sum<X, B>> MapLeft<A, B>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Transducer<X, X> Left) =>
         F.BiMap(fab, Left, Transducer.identity<B>());
@@ -119,7 +119,7 @@ public interface SumFunctor<F, X> where F : SumFunctor<F, X>
 /// <typeparam name="F">Bi-functor type</typeparam>
 /// <typeparam name="X">Constrained left type</typeparam>
 /// <typeparam name="A">Lower-kind bound type</typeparam>
-public interface SumFunctor<F, X, A> where F : SumFunctor<F, X, A>
+public interface FunctorSum<F, X, A> where F : FunctorSum<F, X, A>
 {
     /// <summary>
     /// Bi-map from `X|A -> Y|B` to `X|A -> Y|B -> Z|C` 
@@ -132,7 +132,7 @@ public interface SumFunctor<F, X, A> where F : SumFunctor<F, X, A>
     /// <summary>
     /// Bi-map from `X|A -> Y|B` to `X|A -> Y|B -> Z|C` 
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, C>> BiMap<B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<X, C>> BiMap<B, C>(
         K<F, Sum<X, A>, Sum<X, B>> fab,
         Func<X, X> Left,
         Func<B, C> Right) =>
@@ -141,7 +141,7 @@ public interface SumFunctor<F, X, A> where F : SumFunctor<F, X, A>
     /// <summary>
     /// Map right: from `X|A -> X|B` to `X|A -> X|B -> X|C`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, C>> MapRight<B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<X, C>> MapRight<B, C>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Func<B, C> Right) =>
         F.BiMap(fab, Transducer.identity<X>(), Transducer.lift(Right));
@@ -149,7 +149,7 @@ public interface SumFunctor<F, X, A> where F : SumFunctor<F, X, A>
     /// <summary>
     /// Map right: from `X|A -> X|B` to `X|A -> X|B -> X|C`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, C>> MapRight<B, C>(
+    public static virtual K<F, Sum<X, A>, Sum<X, C>> MapRight<B, C>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Transducer<B, C> Right) =>
         F.BiMap(fab, Transducer.identity<X>(), Right);
@@ -157,7 +157,7 @@ public interface SumFunctor<F, X, A> where F : SumFunctor<F, X, A>
     /// <summary>
     /// Map left: from `X|A -> X|B` to `X|A -> X|B -> X|B`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, B>> MapLeft<B>(
+    public static virtual K<F, Sum<X, A>, Sum<X, B>> MapLeft<B>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Func<X, X> Left) =>
         F.BiMap(fab, Transducer.lift(Left), Transducer.identity<B>());
@@ -165,7 +165,7 @@ public interface SumFunctor<F, X, A> where F : SumFunctor<F, X, A>
     /// <summary>
     /// Map left: from `X|A -> X|B` to `X|A -> X|B -> X|B`
     /// </summary>
-    public static K<F, Sum<X, A>, Sum<X, B>> MapLeft<B>(
+    public static virtual K<F, Sum<X, A>, Sum<X, B>> MapLeft<B>(
         K<F, Sum<X, A>, Sum<X, B>> fab, 
         Transducer<X, X> Left) =>
         F.BiMap(fab, Left, Transducer.identity<B>());

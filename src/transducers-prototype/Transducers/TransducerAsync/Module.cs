@@ -7,6 +7,12 @@ namespace LanguageExt;
 
 public static partial class TransducerAsync
 {
+    /// <summary>
+    /// Lift a value into the `Transducer` space
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <typeparam name="A">Value type</typeparam>
+    /// <returns>`Transducer` from `Unit` to `A`</returns>
     public static TransducerAsync<Unit, A> Pure<A>(A value) =>
         constant<Unit, A>(value);
 
@@ -16,6 +22,16 @@ public static partial class TransducerAsync
     public static TransducerAsync<A, A> identity<A>() =>
         IdentityTransducerAsync<A>.Default;
     
+    /// <summary>
+    /// Constant transducer
+    /// </summary>
+    /// <remarks>
+    /// Takes any value, ignores it and yields the value provided.
+    /// </remarks>
+    /// <param name="value">Constant value to yield</param>
+    /// <typeparam name="A">Input value type</typeparam>
+    /// <typeparam name="B">Constant value type</typeparam>
+    /// <returns>`Transducer` from `A` to `B`</returns>
     public static TransducerAsync<A, B> constant<A, B>(B value) =>
         new ConstantTransducerAsync<A, B>(value);
     
@@ -142,4 +158,44 @@ public static partial class TransducerAsync
         TransducerAsync<A, Func<B, C>> ff,
         TransducerAsync<A, B> fa) =>
         new ApplyTransducerAsync<A, B, C>(ff, fa);
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static TransducerAsync<A, C> bind<A, B, C>(
+        TransducerAsync<A, B> m,
+        TransducerAsync<B, TransducerAsync<A, C>> f) =>
+        new BindTransducerAsync1<A, B, C>(m, f);
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static TransducerAsync<A, C> bind<A, B, C>(
+        TransducerAsync<A, B> m,
+        TransducerAsync<B, Transducer<A, C>> f) =>
+        new BindTransducerAsyncSync1<A, B, C>(m, f);
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static TransducerAsync<A, C> bind<A, B, C>(
+        TransducerAsync<A, B> m,
+        TransducerAsync<B, Func<A, C>> f) =>
+        new BindTransducerAsync2<A, B, C>(m, f);
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static TransducerAsync<A, C> bind<A, B, C>(
+        TransducerAsync<A, B> m,
+        Func<B, TransducerAsync<A, C>> f) =>
+        new BindTransducerAsync3<A, B, C>(m, f);    
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static TransducerAsync<A, C> bind<A, B, C>(
+        TransducerAsync<A, B> m,
+        Func<B, Transducer<A, C>> f) =>
+        new BindTransducerAsyncSync3<A, B, C>(m, f);    
 }

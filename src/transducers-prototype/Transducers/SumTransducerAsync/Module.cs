@@ -39,6 +39,72 @@ public static class SumTransducerAsync
         make(TransducerAsync.constant<X, Sum<Y, B>>(value), TransducerAsync.constant<A, Sum<Y, B>>(value));
 
     /// <summary>
+    /// Lift a constant sum-value into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `Unit | Unit` sum is applied</returns>
+    public static TransducerAsync<Sum<Unit, Unit>, Sum<X, A>> lift<X, A>(Func<Sum<X, A>> value) =>
+        make(TransducerAsync.lift(value), 
+             TransducerAsync.lift(value));
+
+    /// <summary>
+    /// Lift a constant sum-value into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `Unit | Unit` sum is applied</returns>
+    public static TransducerAsync<Sum<Unit, Unit>, Sum<X, A>> lift<X, A>(Func<TResultAsync<Sum<X, A>>> value) =>
+        make(TransducerAsync.lift(value), 
+             TransducerAsync.lift(value));
+
+    /// <summary>
+    /// Lift a function into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `X | A` sum is applied</returns>
+    public static TransducerAsync<Sum<X, A>, Sum<Y, B>> lift<X, Y, A, B>(Func<Sum<X, A>, Sum<Y, B>> value) =>
+        make(TransducerAsync.lift((X x) => value(Sum<X, A>.Left(x))),
+             TransducerAsync.lift((A a) => value(Sum<X, A>.Right(a))));
+
+    /// <summary>
+    /// Lift a function into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `X | A` sum is applied</returns>
+    public static TransducerAsync<Sum<X, A>, Sum<Y, B>> lift<X, Y, A, B>(
+        Func<Sum<X, A>, TResultAsync<Sum<Y, B>>> value) =>
+        make(TransducerAsync.lift((X x) => value(Sum<X, A>.Left(x))),
+             TransducerAsync.lift((A a) => value(Sum<X, A>.Right(a))));
+
+    /// <summary>
+    /// Lift a constant sum-value into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `Unit | Unit` sum is applied</returns>
+    public static TransducerAsync<Sum<Unit, Unit>, Sum<X, A>> lift<X, A>(
+        Func<ValueTask<Sum<X, A>>> value) =>
+        make(TransducerAsync.lift(value), 
+            TransducerAsync.lift(value));
+
+    /// <summary>
+    /// Lift a constant sum-value into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `Unit | Unit` sum is applied</returns>
+    public static TransducerAsync<Sum<Unit, Unit>, Sum<X, A>> lift<X, A>(
+        Func<ValueTask<TResultAsync<Sum<X, A>>>> value) =>
+        make(TransducerAsync.lift(value), 
+            TransducerAsync.lift(value));
+
+    /// <summary>
+    /// Lift a function into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `X | A` sum is applied</returns>
+    public static TransducerAsync<Sum<X, A>, Sum<Y, B>> lift<X, Y, A, B>(Func<Sum<X, A>, ValueTask<Sum<Y, B>>> value) =>
+        make(TransducerAsync.lift((X x) => value(Sum<X, A>.Left(x))),
+             TransducerAsync.lift((A a) => value(Sum<X, A>.Right(a))));
+    
+    /// <summary>
     /// Bi-mapping transducers
     /// </summary>
     /// <param name="Left">Left mapping transducer</param>

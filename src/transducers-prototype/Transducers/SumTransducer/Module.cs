@@ -36,7 +36,44 @@ public static class SumTransducer
     /// <param name="value">Value to lift</param>
     /// <returns>Transducer that yields the provided `Sum` value when a `X | A` sum is applied</returns>
     public static Transducer<Sum<X, A>, Sum<Y, B>> constant<X, Y, A, B>(Sum<Y, B> value) =>
-        make(Transducer.constant<X, Sum<Y, B>>(value), Transducer.constant<A, Sum<Y, B>>(value));
+        make(Transducer.constant<X, Sum<Y, B>>(value), 
+            Transducer.constant<A, Sum<Y, B>>(value));
+
+    /// <summary>
+    /// Lift a constant sum-value into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `Unit | Unit` sum is applied</returns>
+    public static Transducer<Sum<Unit, Unit>, Sum<X, A>> lift<X, A>(Func<Sum<X, A>> value) =>
+        make(Transducer.lift(value), 
+             Transducer.lift(value));
+
+    /// <summary>
+    /// Lift a constant sum-value into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `Unit | Unit` sum is applied</returns>
+    public static Transducer<Sum<Unit, Unit>, Sum<X, A>> lift<X, A>(Func<TResult<Sum<X, A>>> value) =>
+        make(Transducer.lift(value), 
+             Transducer.lift(value));
+
+    /// <summary>
+    /// Lift a function into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `X | A` sum is applied</returns>
+    public static Transducer<Sum<X, A>, Sum<Y, B>> lift<X, Y, A, B>(Func<Sum<X, A>, Sum<Y, B>> value) =>
+        make(Transducer.lift((X x) => value(Sum<X, A>.Left(x))),
+             Transducer.lift((A a) => value(Sum<X, A>.Right(a))));
+
+    /// <summary>
+    /// Lift a function into the sum-transducer
+    /// </summary>
+    /// <param name="value">Value to lift</param>
+    /// <returns>Transducer that yields the provided `Sum` value when a `X | A` sum is applied</returns>
+    public static Transducer<Sum<X, A>, Sum<Y, B>> lift<X, Y, A, B>(Func<Sum<X, A>, TResult<Sum<Y, B>>> value) =>
+        make(Transducer.lift((X x) => value(Sum<X, A>.Left(x))),
+             Transducer.lift((A a) => value(Sum<X, A>.Right(a))));
 
     /// <summary>
     /// Bi-mapping transducers

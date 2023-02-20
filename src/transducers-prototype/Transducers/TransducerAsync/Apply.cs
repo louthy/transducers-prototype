@@ -23,6 +23,6 @@ record ApplyTransducerAsync<A, B, C>(TransducerAsync<A, Func<B, C>> FF, Transduc
     internal record Ap2<S>(Func<B, C> F, ReducerAsync<S, C> Reducer) : ReducerAsync<S, B>
     {
         public override ValueTask<TResultAsync<S>> Run(TState state, S stateValue, B value) =>
-            new(TResultAsync.Recursive(state, stateValue, F(value), Reducer));
+            TResultAsync.Recursive(state, stateValue, F(value), Reducer);
     }
 }
