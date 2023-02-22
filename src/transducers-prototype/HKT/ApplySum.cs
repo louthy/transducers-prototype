@@ -9,9 +9,9 @@ public interface ApplySum<F> : FunctorSum<F>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, Sum<X, A>, Sum<Y, C>> Ap<X, Y, A, B, C>(
-        K<F, Sum<X, A>, Sum<Y, Func<B, C>>> f,  
-        K<F, Sum<X, A>, Sum<Y, B>> x);
+    public static abstract K<F, X, Y, A, C> Ap<X, Y, A, B, C>(
+        K<F, X, Y, A, Func<B, C>> f,  
+        K<F, X, Y, A, B> x);
 }
 
 /// <summary>
@@ -23,9 +23,9 @@ public interface ApplySum<F, X> : FunctorSum<F, X>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, Sum<X, A>, Sum<X, C>> Ap<A, B, C>(
-        K<F, Sum<X, A>, Sum<X, Func<B, C>>> f,  
-        K<F, Sum<X, A>, Sum<X, B>> x);
+    public static abstract K<F, X, X, A, C> Ap<A, B, C>(
+        K<F, X, X, A, Func<B, C>> f,
+        K<F, X, X, A, B> x);
 }
 
 /// <summary>
@@ -37,7 +37,7 @@ public interface ApplySum<F, X, A> : FunctorSum<F, X, A>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, Sum<X, A>, Sum<X, C>> Ap<B, C>(
-        K<F, Sum<X, A>, Sum<X, Func<B, C>>> f,  
-        K<F, Sum<X, A>, Sum<X, B>> x);
+    public static abstract K<F, X, X, A, C> Ap<B, C>(
+        K<F, X, X, A,Func<B, C>> f,  
+        K<F, X, X, A, B> x);
 }

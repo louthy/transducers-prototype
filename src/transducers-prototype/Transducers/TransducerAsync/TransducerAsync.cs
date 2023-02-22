@@ -21,62 +21,6 @@ public abstract record TransducerAsync<A, B>
     public abstract ReducerAsync<S, A> Transform<S>(ReducerAsync<S, B> reduce);
 
     /// <summary>
-    /// Maps every value passing through this transducer
-    /// </summary>
-    public TransducerAsync<A, C> Map<C>(Func<B, C> g) =>
-        new SelectTransducerAsync<A, B, C>(this, g);
-
-    /// <summary>
-    /// Maps every value passing through this transducer
-    /// </summary>
-    public TransducerAsync<A, C> Select<C>(Func<B, C> g) =>
-        new SelectTransducerAsync<A, B, C>(this, g);
-    
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public TransducerAsync<A, C> Bind<C>(Func<B, TransducerAsync<A, C>> g) =>
-        new BindTransducerAsync3<A, B, C>(this, g);
-    
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public TransducerAsync<A, C> Bind<C>(TransducerAsync<B, TransducerAsync<A, C>> g) =>
-        new BindTransducerAsync1<A, B, C>(this, g);
-    
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public TransducerAsync<A, C> Bind<C>(TransducerAsync<B, Transducer<A, C>> g) =>
-        new BindTransducerAsyncSync1<A, B, C>(this, g);
-    
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public TransducerAsync<A, C> Bind<C>(Func<B, Transducer<A, C>> g) =>
-        new BindTransducerAsyncSync3<A, B, C>(this, g);
-
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public TransducerAsync<A, C> SelectMany<C>(Func<B, TransducerAsync<A, C>> g) =>
-        new BindTransducerAsync3<A, B, C>(this, g);
-    
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public TransducerAsync<A, D> SelectMany<C, D>(
-        Func<B, TransducerAsync<A, C>> g,
-        Func<B, C, D> h) =>
-        new SelectManyTransducerAsync2<A, B, C, D>(this, g, h);
-
-    /// <summary>
     /// Transducer composition.  The output of one transducer is fed as the input to the next.
     ///
     /// Resulting im a single transducer that captures the composition

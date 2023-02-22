@@ -3,7 +3,7 @@
 record SumApplyTransducerAsync<X, Y, A, B, C>(
         TransducerAsync<Sum<X, A>, Sum<Y, Func<B, C>>> FF,
         TransducerAsync<Sum<X, A>, Sum<Y, B>> FA) 
-    : TransducerAsync<Sum<X, A>, Sum<Y, C>>
+    : SumTransducerAsync<X, Y, A, C>
 {
     /// <summary>
     /// Transform the transducerAsync using the reducerAsync provided 

@@ -1,4 +1,6 @@
 ﻿#nullable enable
+using LanguageExt.HKT;
+
 namespace LanguageExt;
 
 /// <summary>
@@ -10,8 +12,14 @@ namespace LanguageExt;
 /// </summary>
 /// <typeparam name="A">Input value type</typeparam>
 /// <typeparam name="B">Output value type</typeparam>
-public abstract record Transducer<A, B>
+public abstract record Transducer<A, B> : K<Any, A, B>
 {
+    /// <summary>
+    /// Self access
+    /// </summary>
+    public Transducer<A, B> Morphism => 
+        this;
+    
     /// <summary>
     /// Transform the transducer using the reducer provided 
     /// </summary>
@@ -28,48 +36,6 @@ public abstract record Transducer<A, B>
     /// </remarks>
     /// <returns>Asynchronous transducer version of this transducer </returns>
     public abstract TransducerAsync<A, B> ToAsync();
-
-    /// <summary>
-    /// Maps every value passing through this transducer
-    /// </summary>
-    public Transducer<A, C> Map<C>(Func<B, C> g) =>
-        new SelectTransducer<A, B, C>(this, g);
-
-    /// <summary>
-    /// Maps every value passing through this transducer
-    /// </summary>
-    public Transducer<A, C> Select<C>(Func<B, C> g) =>
-        new SelectTransducer<A, B, C>(this, g);
-
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public Transducer<A, C> Bind<C>(Func<B, Transducer<A, C>> g) =>
-        new BindTransducer3<A, B, C>(this, g);
-
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public Transducer<A, C> Bind<C>(Transducer<B, Transducer<A, C>> g) =>
-        new BindTransducer1<A, B, C>(this, g);
-
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public Transducer<A, C> SelectMany<C>(Func<B, Transducer<A, C>> g) =>
-        new BindTransducer3<A, B, C>(this, g);
-    
-    /// <summary>
-    /// Projects every value into the monadic bind function provided. 
-    /// </summary>
-    /// <returns>Monadic bound transducer</returns>
-    public Transducer<A, D> SelectMany<C, D>(
-        Func<B, Transducer<A, C>> g,
-        Func<B, C, D> h) =>
-        new SelectManyTransducer2<A, B, C, D>(this, g, h);
 
     /// <summary>
     /// Transducer composition.  The output of one transducer is fed as the input to the next.

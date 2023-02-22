@@ -48,6 +48,9 @@ public sealed record TContinue<A>(A Value) : TResult<A>
 
     public override TResultAsync<A> ToAsync() =>
         TResultAsync.Continue(Value);
+
+    public override string ToString() =>
+        $"Continue({Value})";
 }
 public sealed record TComplete<A>(A Value) : TResult<A>
 {
@@ -68,6 +71,9 @@ public sealed record TComplete<A>(A Value) : TResult<A>
 
     public override TResultAsync<A> ToAsync() =>
         TResultAsync.Complete(Value);
+
+    public override string ToString() =>
+        $"Complete({Value})";
 }
 public sealed record TCancelled<A> : TResult<A>
 {
@@ -90,6 +96,9 @@ public sealed record TCancelled<A> : TResult<A>
     
     public override TResultAsync<A> ToAsync() =>
         TResultAsync.Cancel<A>();
+    
+    public override string ToString() =>
+        "Cancelled";
 }
 public sealed record TNone<A> : TResult<A>
 {
@@ -111,6 +120,9 @@ public sealed record TNone<A> : TResult<A>
 
     public override TResultAsync<A> ToAsync() =>
         TResultAsync.None<A>();
+        
+    public override string ToString() =>
+        "None";
 }
 public sealed record TFail<A>(Error Error) : TResult<A>
 {
@@ -131,6 +143,9 @@ public sealed record TFail<A>(Error Error) : TResult<A>
 
     public override TResultAsync<A> ToAsync() =>
         TResultAsync.Fail<A>(Error);
+        
+    public override string ToString() =>
+        $"Fail({Error})";
 }
 
 public sealed record TRecursive<A>(TRecursiveRunner<A> Runner) : TResult<A>
@@ -163,6 +178,9 @@ public sealed record TRecursive<A>(TRecursiveRunner<A> Runner) : TResult<A>
 
     public override TResultAsync<A> ToAsync() =>
         TResultAsync.Recursive(Runner.ToAsync());
+        
+    public override string ToString() =>
+        "Recursive";
 }
 
 public abstract record TRecursiveRunner<A>

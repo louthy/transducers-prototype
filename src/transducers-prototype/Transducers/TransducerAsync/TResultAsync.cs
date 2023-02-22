@@ -46,7 +46,10 @@ public record TContinueAsync<A>(A Value) : TResultAsync<A>
         f(Value);
 
     public override ValueTask<TResultAsync<S>> Reduce<S>(TState st, S s, ReducerAsync<S, A> r) =>
-        new(TResultAsync.Complete(s));
+        new(TResultAsync.Continue(s));
+                    
+    public override string ToString() =>
+        $"Continue({Value})";
 }
 
 public record TCompleteAsync<A>(A Value) : TResultAsync<A>
@@ -65,6 +68,9 @@ public record TCompleteAsync<A>(A Value) : TResultAsync<A>
 
     public override ValueTask<TResultAsync<S>> Reduce<S>(TState st, S s, ReducerAsync<S, A> r) =>
         new(TResultAsync.Recursive(st, s, Value, r));
+                    
+    public override string ToString() =>
+        $"Complete({Value})";
 }
 public record TCancelledAsync<A> : TResultAsync<A>
 {
@@ -84,6 +90,9 @@ public record TCancelledAsync<A> : TResultAsync<A>
 
     public override ValueTask<TResultAsync<S>> Reduce<S>(TState st, S s, ReducerAsync<S, A> r) =>
         new(TCancelledAsync<S>.Default);
+                
+    public override string ToString() =>
+        "Cancelled";
 }
 public record TNoneAsync<A> : TResultAsync<A>
 {
@@ -102,6 +111,9 @@ public record TNoneAsync<A> : TResultAsync<A>
 
     public override ValueTask<TResultAsync<S>> Reduce<S>(TState st, S s, ReducerAsync<S, A> r) =>
         new(TNoneAsync<S>.Default);
+                    
+    public override string ToString() =>
+        $"None";
 }
 public record TFailAsync<A>(Error Error) : TResultAsync<A>
 {
@@ -119,6 +131,9 @@ public record TFailAsync<A>(Error Error) : TResultAsync<A>
 
     public override ValueTask<TResultAsync<S>> Reduce<S>(TState st, S s, ReducerAsync<S, A> r) =>
         new(TResultAsync.Fail<S>(Error));
+                
+    public override string ToString() =>
+        $"Fail({Error})";
 }
 
 public record TRecursiveAsync<A>(TRecursiveRunnerAsync<A> Runner) : TResultAsync<A>
@@ -151,6 +166,9 @@ public record TRecursiveAsync<A>(TRecursiveRunnerAsync<A> Runner) : TResultAsync
             _ => throw new NotSupportedException()
         };
     }
+            
+    public override string ToString() =>
+        "Recursive";
 }
 
 public abstract record TRecursiveRunnerAsync<A>

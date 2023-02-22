@@ -146,6 +146,9 @@ public record SumLeft<X, A>(X Value) : Sum<X, A>
     /// <returns>Mapped monad</returns>
     public override Sum<X, B> Bind<B>(Func<A, Sum<X, B>> f) =>
         new SumLeft<X, B>(Value);
+
+    public override string ToString() =>
+        $"Left({Value})";
 }
 
 /// <summary>
@@ -203,4 +206,7 @@ public record SumRight<X, A>(A Value) : Sum<X, A>
     /// <returns>Mapped monad</returns>
     public override Sum<X, B> Bind<B>(Func<A, Sum<X, B>> f) =>
         f(Value);
+
+    public override string ToString() =>
+        $"Right({Value})";
 }

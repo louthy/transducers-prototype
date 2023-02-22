@@ -3,7 +3,7 @@
 record SumApplyTransducer<X, Y, A, B, C>(
         Transducer<Sum<X, A>, Sum<Y, Func<B, C>>> FF,
         Transducer<Sum<X, A>, Sum<Y, B>> FA) 
-    : Transducer<Sum<X, A>, Sum<Y, C>>
+    : SumTransducer<X, Y, A, C>
 {
     /// <summary>
     /// Transform the transducer using the reducer provided 
@@ -18,6 +18,12 @@ record SumApplyTransducer<X, Y, A, B, C>(
     /// Lift the synchronous sum-transducer into the asynchronous space 
     /// </summary>
     public override TransducerAsync<Sum<X, A>, Sum<Y, C>> ToAsync() =>
+        ToSumAsync();
+
+    /// <summary>
+    /// Lift the synchronous sum-transducer into the asynchronous space 
+    /// </summary>
+    public override SumTransducerAsync<X, Y, A, C> ToSumAsync() =>
         new SumApplyTransducerAsync<X, Y, A, B, C>(FF.ToAsync(), FA.ToAsync());
     
     record Reduce<S>(

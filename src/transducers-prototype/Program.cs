@@ -1,6 +1,16 @@
 ﻿using LanguageExt;
 using static LanguageExt.Transducer;
 
+var mx = SumTransducer.Right<Unit, int>(100); 
+var my = SumTransducer.Right<Unit, int>(299);
+var mf = SumTransducer.Left<Unit, int>(default);
+var mz = from x in mx
+         from y in my
+         from _ in mf
+         select x + y;
+
+
+var mr = mz.Invoke1(Sum<Unit, Unit>.Right(default));
 
 // Start up
 single(0).Invoke1(default);

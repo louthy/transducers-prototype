@@ -9,24 +9,24 @@ public interface MonadSum<M> : ApplicativeSum<M>
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static abstract K<M, Sum<X, A>, Sum<Z, C>> Bind<X, Y, Z, A, B, C>(
+    public static abstract K<M, X, Z, A, C> Bind<X, Y, Z, A, B, C>(
         K<M, Sum<X, A>, Sum<Y, B>> mx, 
-        Transducer<B, K<M, Sum<X, A>, Sum<Z, C>>> f);
+        Transducer<B, K<M, X, Z, A, C>> f);
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, Sum<X, A>, Sum<Z, C>> Bind<X, Y, Z, A, B, C>(
-        K<M, Sum<X, A>, Sum<Y, B>> mx, 
-        Func<B, K<M, Sum<X, A>, Sum<Z, C>>> f) =>
+    public static virtual K<M, X, Z, A, C> Bind<X, Y, Z, A, B, C>(
+        K<M, X, Y, A, B> mx, 
+        Func<B, K<M, X, Z, A, C>> f) =>
         M.Bind(mx, Transducer.lift(f));
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, Sum<X, A>, Sum<Y, B>> Flatten<X, Y, A, B>(
-        K<M, Sum<X, A>, Sum<Y, K<M, Sum<X, A>, Sum<Y, B>>>> mmx) =>
-        M.Bind(mmx, Transducer.identity<K<M, Sum<X, A>, Sum<Y, B>>>());
+    public static virtual K<M, X, Y, A, B> Flatten<X, Y, A, B>(
+        K<M, X, Y, A, K<M, X, Y, A, B>> mmx) =>
+        M.Bind(mmx, Transducer.identity<K<M, X, Y, A, B>>());
 }
 
 /// <summary>
@@ -38,24 +38,24 @@ public interface MonadSum<M, X> : ApplicativeSum<M, X>
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static abstract K<M, Sum<X, A>, Sum<X, C>> Bind<A, B, C>(
-        K<M, Sum<X, A>, Sum<X, B>> mx, 
-        Transducer<B, K<M, Sum<X, A>, Sum<X, C>>> f);
+    public static abstract K<M, X, X, A, C> Bind<A, B, C>(
+        K<M, X, X, A, B> mx, 
+        Transducer<B, K<M, X, X, A, C>> f);
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, Sum<X, A>, Sum<X, C>> Bind<A, B, C>(
-        K<M, Sum<X, A>, Sum<X, B>> mx, 
-        Func<B, K<M, Sum<X, A>, Sum<X, C>>> f) =>
+    public static virtual K<M, X, X, A, C> Bind<A, B, C>(
+        K<M, X, X, A, B> mx, 
+        Func<B, K<M, X, X, A, C>> f) =>
         M.Bind(mx, Transducer.lift(f));
 
     /// <summary>
     /// Monad bind
     /// </summary>
     public static virtual K<M, Sum<X, A>, Sum<X, B>> Flatten<A, B>(
-        K<M, Sum<X, A>, Sum<X, K<M, Sum<X, A>, Sum<X, B>>>> mmx) =>
-        M.Bind(mmx, Transducer.identity<K<M, Sum<X, A>, Sum<X, B>>>());
+        K<M, X, X, A, K<M, X, X, A, B>> mmx) =>
+        M.Bind(mmx, Transducer.identity<K<M, X, X, A, B>>());
 }
 
 /// <summary>
@@ -67,22 +67,22 @@ public interface MonadSum<M, X, A> : ApplicativeSum<M, X, A>
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static abstract K<M, Sum<X, A>, Sum<X, C>> Bind<B, C>(
-        K<M, Sum<X, A>, Sum<X, B>> mx, 
-        Transducer<B, K<M, Sum<X, A>, Sum<X, C>>> f);
+    public static abstract K<M, X, X, A, C> Bind<B, C>(
+        K<M, X, X, A, B> mx, 
+        Transducer<B, K<M, X, X, A, C>> f);
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, Sum<X, A>, Sum<X, C>> Bind<B, C>(
-        K<M, Sum<X, A>, Sum<X, B>> mx, 
-        Func<B, K<M, Sum<X, A>, Sum<X, C>>> f) =>
+    public static virtual K<M, X, X, A, C> Bind<B, C>(
+        K<M, X, X, A, B> mx, 
+        Func<B, K<M, X, X, A, C>> f) =>
         M.Bind(mx, Transducer.lift(f));
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, Sum<X, A>, Sum<X, B>> Flatten<B>(
-        K<M, Sum<X, A>, Sum<X, K<M, Sum<X, A>, Sum<X, B>>>> mmx) =>
-        M.Bind(mmx, Transducer.identity<K<M, Sum<X, A>, Sum<X, B>>>());
+    public static virtual K<M, X, X, A, B> Flatten<B>(
+        K<M, X, X, A, K<M, X, X, A, B>> mmx) =>
+        M.Bind(mmx, Transducer.identity<K<M, X, X, A, B>>());
 }

@@ -8,7 +8,7 @@ record SelectTransducer<A, B, C>(Transducer<A, B> F, Func<B, C> G) :
         new Reduce<S>(F, G, reduce);
 
     public override TransducerAsync<A, C> ToAsync() =>
-        throw new NotImplementedException();
+        new SelectTransducerAsync<A,B,C>(F.ToAsync(), G);
 
     record Reduce<S>(Transducer<A, B> F, Func<B, C> G, Reducer<S, C> Reducer) : 
         Reducer<S, A>

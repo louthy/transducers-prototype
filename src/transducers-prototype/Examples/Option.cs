@@ -2,51 +2,55 @@
 
 namespace LanguageExt.Examples;
 
-public readonly record struct Option<A>(Transducer<Sum<Unit, Unit>, Sum<Unit, A>> MorphismUnsafe) 
-    : K<Option, Sum<Unit, Unit>, Sum<Unit, A>>
+public readonly record struct Option<A>(SumTransducer<Unit, Unit, Unit, A> MorphismUnsafe) 
+    : K<Option, Unit, Unit, Unit, A>
 {
-    public Transducer<Sum<Unit, Unit>, Sum<Unit, A>> Morphism =>
+    Transducer<Sum<Unit, Unit>, Sum<Unit, A>> K<Option, Sum<Unit, Unit>, Sum<Unit, A>>.Morphism =>
+        MorphismUnsafe;
+
+    public SumTransducer<Unit, Unit, Unit, A> Morphism => 
         MorphismUnsafe;
 
     public static Option<A> Some(A value) =>
-        SumTransducer.Pure(Sum<Unit, A>.Right(value));
+        SumTransducer.Right<Unit, A>(value);
     
     public static readonly Option<A> None =
-        SumTransducer.Pure(Sum<Unit, A>.Left(default));
+        SumTransducer.Left<Unit, A>(default);
 
     public static Option<A> Optional(A? value) =>
         value is null 
             ? None 
             : Some(value);
     
-    public static implicit operator Option<A>(Transducer<Sum<Unit, Unit>, Sum<Unit, A>> m) =>
+    public static implicit operator Option<A>(SumTransducer<Unit, Unit, Unit, A> m) =>
         new (m);
+    
+    public static implicit operator Option<A>(Transducer<Sum<Unit, Unit>, Sum<Unit, A>> m) =>
+        new (SumTransducer.lift(m));
 }
 
 public class Option : 
     MonadSum<Option, Unit, Unit>, 
     ApplySum<Option, Unit, Unit>
 {
-    public static K<Option, Sum<Unit, Unit>, Sum<Unit, A>> Lift<A>(Transducer<Sum<Unit, Unit>, Sum<Unit, A>> f) =>
+    public static K<Option, Unit, Unit, Unit, A> Lift<A>(SumTransducer<Unit, Unit, Unit, A> f) =>
         new Option<A>(f);
 
-    public static K<Option, Sum<Unit, Unit>, Sum<Unit, B>> BiMap<A, B>(
-        K<Option, Sum<Unit, Unit>, Sum<Unit, A>> fab, 
+    public static K<Option, Unit, Unit, Unit, B> BiMap<A, B>(
+        K<Option, Unit, Unit, Unit, A> fab, 
         Transducer<Unit, Unit> Left, 
         Transducer<A, B> Right) =>
-        new Option<B>(Transducer.compose(fab.Morphism, SumTransducer.bimap(Left, Right)));
+        new Option<B>(SumTransducer.compose(fab.Morphism, SumTransducer.bimap(Left, Right)));
 
-    public static K<Option, Sum<Unit, Unit>, Sum<Unit, C>> Ap<B, C>(
-        K<Option, Sum<Unit, Unit>, Sum<Unit, Func<B, C>>> f,
-        K<Option, Sum<Unit, Unit>, Sum<Unit, B>> x) =>
+    public static K<Option, Unit, Unit, Unit, C> Ap<B, C>(
+        K<Option, Unit, Unit, Unit, Func<B, C>> f,
+        K<Option, Unit, Unit, Unit, B> x) =>
         new Option<C>(f.Morphism.Apply(x.Morphism));
 
-    public static K<Option, Sum<Unit, Unit>, Sum<Unit, C>> Bind<B, C>(
-        K<Option, Sum<Unit, Unit>, Sum<Unit, B>> mx, 
-        Transducer<B, K<Option, Sum<Unit, Unit>, Sum<Unit, C>>> f)
-    {
-        throw new NotImplementedException();
-    }
+    public static K<Option, Unit, Unit, Unit, C> Bind<B, C>(
+        K<Option, Unit, Unit, Unit, B> mx,
+        Transducer<B, K<Option, Unit, Unit, Unit, C>> f) =>
+        new Option<C>(mx.Morphism.Bind(f.Map(static b => b.Morphism)));
 }
 
 public static class Test
@@ -55,7 +59,7 @@ public static class Test
         where F : Apply<F, A>, Applicative<F, A> =>
             F.Ap(F.Ap(F.Pure(addF), mx), my);
 
-    public static K<F, Sum<X, A>, Sum<X, int>> Add<F, X, A>(K<F, Sum<X, A>, Sum<X, int>> mx, K<F, Sum<X, A>, Sum<X, int>> my)
+    public static K<F, Sum<X, A>, Sum<X, int>> Add<F, X, A>(K<F, X, X, A, int> mx, K<F, X, X, A, int> my)
         where F : ApplySum<F, X, A>, ApplicativeSum<F, X, A> =>
             F.Ap(F.Ap(F.Pure(addF), mx), my);
 

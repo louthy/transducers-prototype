@@ -3,6 +3,63 @@
 public static partial class TransducerAsync
 {
     /// <summary>
+    /// Maps every value passing through this transducer
+    /// </summary>
+    public static TransducerAsync<A, C> Map<A, B, C>(this TransducerAsync<A, B> m, Func<B, C> g) =>
+        new SelectTransducerAsync<A, B, C>(m, g);
+
+    /// <summary>
+    /// Maps every value passing through this transducer
+    /// </summary>
+    public static TransducerAsync<A, C> Select<A, B, C>(this TransducerAsync<A, B> m, Func<B, C> g) =>
+        new SelectTransducerAsync<A, B, C>(m, g);
+    
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static TransducerAsync<A, C> Bind<A, B, C>(this TransducerAsync<A, B> m, Func<B, TransducerAsync<A, C>> g) =>
+        new BindTransducerAsync3<A, B, C>(m, g);
+    
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static TransducerAsync<A, C> Bind<A, B, C>(this TransducerAsync<A, B> m, TransducerAsync<B, TransducerAsync<A, C>> g) =>
+        new BindTransducerAsync1<A, B, C>(m, g);
+    
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static TransducerAsync<A, C> Bind<A, B, C>(this TransducerAsync<A, B> m, TransducerAsync<B, Transducer<A, C>> g) =>
+        new BindTransducerAsyncSync1<A, B, C>(m, g);
+    
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static TransducerAsync<A, C> Bind<A, B, C>(this TransducerAsync<A, B> m, Func<B, Transducer<A, C>> g) =>
+        new BindTransducerAsyncSync3<A, B, C>(m, g);
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static TransducerAsync<A, C> SelectMany<A, B, C>(this TransducerAsync<A, B> m, Func<B, TransducerAsync<A, C>> g) =>
+        new BindTransducerAsync3<A, B, C>(m, g);
+    
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static TransducerAsync<A, D> SelectMany<A, B, C, D>(
+        this TransducerAsync<A, B> m,
+        Func<B, TransducerAsync<A, C>> g,
+        Func<B, C, D> h) =>
+        new SelectManyTransducerAsync2<A, B, C, D>(m, g, h);
+    
+    /// <summary>
     /// Take nested transducers and flatten them
     /// </summary>
     /// <param name="ff">Nested transducers</param>
