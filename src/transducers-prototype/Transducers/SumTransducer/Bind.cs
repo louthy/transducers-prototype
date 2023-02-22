@@ -49,8 +49,7 @@ record SumBindTransducer1<X, Y, A, B, C>(
             };
 
         public override ReducerAsync<S, Sum<Y, B>> ToAsync() =>
-            throw new NotImplementedException(); // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO   
-            //new SumBindTransducerAsyncSync1<X, Y, A, B, C>.Binder1<S>(Value, F.ToAsync(), Reducer.ToAsync());
+            new SumBindTransducerAsyncSync1<X, Y, A, B, C>.Binder1<S>(Value, F.ToAsync(), Reducer.ToAsync());
     }
     
     record Binder2<S>(Sum<X, A> Value, Reducer<S, Sum<Y, C>> Reducer) : Reducer<S, SumTransducer<X, Y, A, C>>
@@ -59,8 +58,7 @@ record SumBindTransducer1<X, Y, A, B, C>(
             f.Transform(Reducer).Run(st, s, Value);
 
         public override ReducerAsync<S, SumTransducer<X, Y, A, C>> ToAsync() =>
-            throw new NotImplementedException(); // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO   
-            //new SumBindTransducerAsyncSync1<X, Y, A, B, C>.Binder2<S>(Value, Reducer.ToAsync());
+            new SumBindTransducerAsyncSync1<X, Y, A, B, C>.Binder2<S>(Value, Reducer.ToAsync());
     }
 }
 
