@@ -38,60 +38,6 @@ public abstract record Transducer<A, B> : K<Any, A, B>
     public abstract TransducerAsync<A, B> ToAsync();
 
     /// <summary>
-    /// Transducer composition.  The output of one transducer is fed as the input to the next.
-    ///
-    /// Resulting im a single transducer that captures the composition
-    /// </summary>
-    /// <returns>Transducer that captures the composition</returns>
-    public Transducer<A, C> Compose<C>(Transducer<B, C> g) =>
-        new ComposeTransducer<A, B, C>(this, g);
-
-    /// <summary>
-    /// Transducer composition.  The output of one transducer is fed as the input to the next.
-    ///
-    /// Resulting im a single transducer that captures the composition
-    /// </summary>
-    /// <returns>Transducer that captures the composition</returns>
-    public Transducer<A, D> Compose<C, D>(Transducer<B, C> g, Transducer<C, D> h) =>
-        new ComposeTransducer<A, B, C, D>(this, g, h);
-
-    /// <summary>
-    /// Transducer composition.  The output of one transducer is fed as the input to the next.
-    ///
-    /// Resulting im a single transducer that captures the composition
-    /// </summary>
-    /// <returns>Transducer that captures the composition</returns>
-    public Transducer<A, E> Compose<C, D, E>(Transducer<B, C> g, Transducer<C, D> h, Transducer<D, E> i) =>
-        new ComposeTransducer<A, B, C, D, E>(this, g, h, i);
-
-    /// <summary>
-    /// Transducer composition.  The output of one transducer is fed as the input to the next.
-    ///
-    /// Resulting im a single transducer that captures the composition
-    /// </summary>
-    /// <returns>Transducer that captures the composition</returns>
-    public Transducer<A, F> Compose<C, D, E, F>(
-        Transducer<B, C> g, 
-        Transducer<C, D> h, 
-        Transducer<D, E> i, 
-        Transducer<E, F> j) =>
-        new ComposeTransducer<A, B, C, D, E, F>(this, g, h, i, j);
-
-    /// <summary>
-    /// Transducer composition.  The output of one transducer is fed as the input to the next.
-    ///
-    /// Resulting im a single transducer that captures the composition
-    /// </summary>
-    /// <returns>Transducer that captures the composition</returns>
-    public Transducer<A, G> Compose<C, D, E, F, G>(
-        Transducer<B, C> g, 
-        Transducer<C, D> h, 
-        Transducer<D, E> i, 
-        Transducer<E, F> j, 
-        Transducer<F, G> k) =>
-        new ComposeTransducer<A, B, C, D, E, F, G>(this, g, h, i, j, k);
-
-    /// <summary>
     /// Invoke the transducer, reducing to a single value only
     /// </summary>
     /// <param name="value">Value to use as the argument to the transducer</param>

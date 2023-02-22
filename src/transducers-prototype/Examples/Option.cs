@@ -50,7 +50,7 @@ public readonly record struct Option<A>(SumTransducer<Unit, Unit, Unit, A> Morph
         };
 }
 
-public class Option : 
+public readonly struct Option : 
     MonadSum<Option, Unit, Unit>, 
     ApplySum<Option, Unit, Unit>
 {
@@ -80,7 +80,7 @@ public static class Test
         where F : Apply<F, A>, Applicative<F, A> =>
             F.Ap(F.Ap(F.Pure(addF), mx), my);
 
-    public static K<F, Sum<X, A>, Sum<X, int>> Add<F, X, A>(K<F, X, X, A, int> mx, K<F, X, X, A, int> my)
+    public static K<F, X, X, A, int> Add<F, X, A>(K<F, X, X, A, int> mx, K<F, X, X, A, int> my)
         where F : ApplySum<F, X, A>, ApplicativeSum<F, X, A> =>
             F.Ap(F.Ap(F.Pure(addF), mx), my);
 
