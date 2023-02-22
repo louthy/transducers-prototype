@@ -27,6 +27,27 @@ public readonly record struct Option<A>(SumTransducer<Unit, Unit, Unit, A> Morph
     
     public static implicit operator Option<A>(Transducer<Sum<Unit, Unit>, Sum<Unit, A>> m) =>
         new (SumTransducer.lift(m));
+
+    public Option<B> Map<B>(Func<A, B> f) =>
+        Morphism.Map(f);
+
+    public Option<B> Select<B>(Func<A, B> f) =>
+        Morphism.Map(f);
+
+    public Option<B> Bind<B>(Func<A, Option<B>> f) =>
+        Morphism.Bind(x => f(x).Morphism);
+
+    public Option<C> SelectMany<B, C>(Func<A, Option<B>> b, Func<A, B, C> p) =>
+        Bind(x => b(x).Map(y => p(x, y)));
+
+    public B Match<B>(Func<A, B> Some, Func<B> None) =>
+        Morphism.Invoke1(Sum<Unit, Unit>.Right(default)) switch
+        {
+            TComplete<Sum<Unit, A>> {Value: SumRight<Unit, A> r} => Some(r.Value),
+            TFail<Sum<Unit, A>> f                                => throw new Exception(f.Error.Message),     // Placeholder 
+            TCancelled<Sum<Unit, A>>                             => throw new OperationCanceledException(), 
+            _                                                    => None()
+        };
 }
 
 public class Option : 
