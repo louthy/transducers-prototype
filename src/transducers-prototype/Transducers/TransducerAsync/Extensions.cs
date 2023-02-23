@@ -86,4 +86,10 @@ public static partial class TransducerAsync
         this TransducerAsync<A, Func<B, C>> ff,
         TransducerAsync<A, B> fa) =>
         new ApplyTransducerAsync<A, B, C>(ff, fa);
+        
+    /// <summary>
+    /// Lifts a unit accepting transducer, ignores the input value.
+    /// </summary>
+    public static TransducerAsync<A, B> Ignore<A, B>(this TransducerAsync<Unit, B> m) =>
+        new IgnoreTransducerAsync<A, B>(m);
 }

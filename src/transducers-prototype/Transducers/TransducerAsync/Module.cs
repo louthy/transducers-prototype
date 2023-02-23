@@ -198,4 +198,10 @@ public static partial class TransducerAsync
         TransducerAsync<A, B> m,
         Func<B, Transducer<A, C>> f) =>
         new BindTransducerAsyncSync3<A, B, C>(m, f);    
+    
+    /// <summary>
+    /// Lifts a unit accepting transducer, ignores the input value.
+    /// </summary>
+    public static TransducerAsync<A, B> ignore<A, B>(TransducerAsync<Unit, B> m) =>
+        new IgnoreTransducerAsync<A, B>(m);
 }

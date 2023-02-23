@@ -72,4 +72,10 @@ public static partial class Transducer
         this Transducer<A, Func<B, C>> ff,
         Transducer<A, B> fa) =>
         new ApplyTransducer<A, B, C>(ff, fa);
+    
+    /// <summary>
+    /// Lifts a unit accepting transducer, ignores the input value.
+    /// </summary>
+    public static Transducer<A, B> Ignore<A, B>(this Transducer<Unit, B> m) =>
+        new IgnoreTransducer<A, B>(m);
 }

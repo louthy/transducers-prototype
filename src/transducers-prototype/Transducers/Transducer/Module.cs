@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using LanguageExt.HKT;
 
 namespace LanguageExt;
 
@@ -161,4 +162,10 @@ public static partial class Transducer
         Transducer<A, B> m,
         Func<B, Transducer<A, C>> f) =>
         new BindTransducer3<A, B, C>(m, f);
+
+    /// <summary>
+    /// Lifts a unit accepting transducer, ignores the input value.
+    /// </summary>
+    public static Transducer<A, B> ignore<A, B>(Transducer<Unit, B> m) =>
+        new IgnoreTransducer<A, B>(m);
 }

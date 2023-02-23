@@ -224,4 +224,7 @@ public static class SumTransducer
         SumTransducer<X, Y, A, B> m,
         Transducer<B, SumTransducer<X, Y, A, C>> f) =>
         new SumBindTransducer1<X, Y, A , B, C>(m, f);
+    
+    public static SumTransducer<X, Y, A, B> ignore<X, Y, A, B>(SumTransducer<Unit, Unit, Unit, B> m) =>
+        Transducer.ignore<Sum<X, A>, Sum<Y, B>>(m)
 }
