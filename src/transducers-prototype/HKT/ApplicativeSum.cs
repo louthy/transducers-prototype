@@ -9,54 +9,54 @@ public interface ApplicativeSum<F> : FunctorSum<F>
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static abstract K<F, X, Y, A, B> Lift<X, Y, A, B>(SumTransducer<X, Y, A, B> f);
+    public static abstract KArr<F, X, Y, A, B> Lift<X, Y, A, B>(SumTransducer<X, Y, A, B> f);
 
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual K<F, X, Y, A, B> Lift<X, Y, A, B>(Func<Sum<X, A>, Sum<Y, B>> f) =>
+    public static virtual KArr<F, X, Y, A, B> Lift<X, Y, A, B>(Func<Sum<X, A>, Sum<Y, B>> f) =>
         F.Lift(SumTransducer.lift(f));
 
     /// <summary>
     /// Lift sum-type into applicative
     /// </summary>
-    public static virtual K<F, X, Y, A, B> Lift<X, Y, A, B>(Sum<Y, B> value) =>
+    public static virtual KArr<F, X, Y, A, B> Lift<X, Y, A, B>(Sum<Y, B> value) =>
         F.Lift(SumTransducer.constant<X, Y, A, B>(value));
 
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual K<F, X, X, A, B> LiftRight<X, A, B>(Transducer<A, B> f) =>
+    public static virtual KArr<F, X, X, A, B> LiftRight<X, A, B>(Transducer<A, B> f) =>
         F.Lift(SumTransducer.mapRight<X, A, B>(f));
 
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual K<F, X, X, A, B> LiftRight<X, A, B>(Func<A, B> f) =>
+    public static virtual KArr<F, X, X, A, B> LiftRight<X, A, B>(Func<A, B> f) =>
         F.Lift(SumTransducer.mapRight<X, A, B>(Transducer.lift(f)));
 
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual K<F, X, Y, A, A> LiftLeft<X, Y, A>(Transducer<X, Y> f) =>
+    public static virtual KArr<F, X, Y, A, A> LiftLeft<X, Y, A>(Transducer<X, Y> f) =>
         F.Lift(SumTransducer.mapLeft<X, Y, A>(f));
 
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual K<F, X, Y, A, A> LiftLeft<X, Y, A>(Func<X, Y> f) =>
+    public static virtual KArr<F, X, Y, A, A> LiftLeft<X, Y, A>(Func<X, Y> f) =>
         F.Lift(SumTransducer.mapLeft<X, Y, A>(Transducer.lift(f)));
 
     /// <summary>
     /// Pure constructor
     /// </summary>
-    public static virtual K<F, X, Y, A, B> Pure<X, Y, A, B>(B value) =>
+    public static virtual KArr<F, X, Y, A, B> Pure<X, Y, A, B>(B value) =>
         F.Lift(SumTransducer.constant<X, Y, A, B>(Sum<Y, B>.Right(value)));
 
     /// <summary>
     /// Left constructor
     /// </summary>
-    public static virtual K<F, X, Y, A, B> Raise<X, Y, A, B>(Y value) =>
+    public static virtual KArr<F, X, Y, A, B> Raise<X, Y, A, B>(Y value) =>
         F.Lift(SumTransducer.constant<X, Y, A, B>(Sum<Y, B>.Left(value)));
 }
 
@@ -69,89 +69,76 @@ public interface ApplicativeSum<F, X> : FunctorSum<F, X>
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static abstract K<F, X, X, A, B> Lift<A, B>(SumTransducer<X, X, A, B> f);
+    public static abstract KArr<F, Env, X, Env, A> Lift<Env, A>(SumTransducer<Env, X, Env, A> f);
 
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual K<F, X, X, A, B> Lift<A, B>(Func<Sum<X, A>, Sum<X, B>> f) =>
+    public static virtual KArr<F, Env, X, Env, A> Lift<Env, A>(Func<Sum<Env, Env>, Sum<X, A>> f) =>
         F.Lift(SumTransducer.lift(f));
+
+    /// <summary>
+    /// Lift transducer into applicative
+    /// </summary>
+    public static virtual KArr<F, Env, X, Env, A> Lift<Env, A>(Func<Env, Sum<X, A>> f) =>
+        F.Lift((Sum<Env, Env> e) => e switch
+        {
+            SumRight<Env, Env> r => f(r.Value),
+            SumLeft<Env, Env> l => f(l.Value),
+            _ => throw new NotSupportedException()
+        });
     
     /// <summary>
     /// Lift sum-type into applicative
     /// </summary>
-    public static virtual K<F, X, X, A, B> Lift<A, B>(Sum<X, B> value) =>    
-        F.Lift(SumTransducer.constant<X, X, A, B>(value));
-
-    /// <summary>
-    /// Lift transducer into applicative
-    /// </summary>
-    public static virtual K<F, X, X, A, B> LiftRight<A, B>(Transducer<A, B> f) =>
-        F.Lift(SumTransducer.mapRight<X, A, B>(f));
-
-    /// <summary>
-    /// Lift transducer into applicative
-    /// </summary>
-    public static virtual K<F, X, X, A, B> LiftRight<A, B>(Func<A, B> f) =>
-        F.Lift(SumTransducer.mapRight<X, A, B>(Transducer.lift(f)));
+    public static virtual KArr<F, Env, X, Env, A> Lift<Env, A>(Sum<X, A> value) =>    
+        F.Lift(SumTransducer.constant<Env, X, Env, A>(value));
     
     /// <summary>
     /// Pure constructor
     /// </summary>
-    public static virtual K<F, X, X, A, B> Pure<A, B>(B value) =>
-        F.Lift(SumTransducer.constant<X, X, A, B>(Sum<X, B>.Right(value)));
+    public static virtual KArr<F, Env, X, Env, A> Pure<Env, A>(A value) =>
+        F.Lift(SumTransducer.constant<Env, X, Env, A>(Sum<X, A>.Right(value)));
     
     /// <summary>
     /// Left constructor
     /// </summary>
-    public static virtual K<F, X, X, A, B> Raise<A, B>(X value) =>
-        F.Lift(SumTransducer.constant<X, X, A, B>(Sum<X, B>.Left(value)));
+    public static virtual KArr<F, Env, X, Env, A> Raise<Env, A>(X value) =>
+        F.Lift(SumTransducer.constant<Env, X, Env, A>(Sum<X, A>.Left(value)));
 }
 
 /// <summary>
 /// Applicative pure trait with fixed left type and input type
 /// </summary>
-public interface ApplicativeSum<F, X, A> : FunctorSum<F, X, A> 
-    where F : ApplicativeSum<F, X, A>
+public interface ApplicativeSum2<F, Env, X> : FunctorSum2<F, Env, X> 
+    where F : ApplicativeSum2<F, Env, X>
 {
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static abstract K<F, X, X, A, B> Lift<B>(SumTransducer<X, X, A, B> f);
+    public static abstract KArr<F, Env, X, Env, A> Lift<A>(SumTransducer<Env, X, Env, A> f);
 
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual K<F, X, X, A, B> Lift<B>(Func<Sum<X, A>, Sum<X, B>> f) =>
+    public static virtual KArr<F, Env, X, Env, A> Lift<A>(Func<Sum<Env, Env>, Sum<X, A>> f) =>
         F.Lift(SumTransducer.lift(f));
     
     /// <summary>
     /// Lift sum-type into applicative
     /// </summary>
-    public static virtual K<F, X, X, A, B> Lift<B>(Sum<X, B> value) =>    
-        F.Lift(SumTransducer.constant<X, X, A, B>(value));
-
-    /// <summary>
-    /// Lift transducer into applicative
-    /// </summary>
-    public static virtual K<F, Sum<X, A>, Sum<X, B>> LiftRight<B>(Transducer<A, B> f) =>
-        F.Lift(SumTransducer.mapRight<X, A, B>(f));
-
-    /// <summary>
-    /// Lift transducer into applicative
-    /// </summary>
-    public static virtual K<F, X, X, A, B> LiftRight<B>(Func<A, B> f) =>
-        F.Lift(SumTransducer.mapRight<X, A, B>(Transducer.lift(f)));
+    public static virtual KArr<F, Env, X, Env, A> Lift<A>(Sum<X, A> value) =>    
+        F.Lift(SumTransducer.constant<Env, X, Env, A>(value));
     
     /// <summary>
     /// Pure constructor
     /// </summary>
-    public static virtual K<F, X, X, A, B> Pure<B>(B value) =>
-        F.Lift(SumTransducer.constant<X, X, A, B>(Sum<X, B>.Right(value)));
+    public static virtual KArr<F, Env, X, Env, A> Pure<A>(A value) =>
+        F.Lift(SumTransducer.constant<Env, X, Env, A>(Sum<X, A>.Right(value)));
     
     /// <summary>
     /// Left constructor
     /// </summary>
-    public static virtual K<F, X, X, A, B> Raise<B>(X value) =>
-        F.Lift(SumTransducer.constant<X, X, A, B>(Sum<X, B>.Left(value)));
+    public static virtual KArr<F, Env, X, Env, B> Raise<B>(X value) =>
+        F.Lift(SumTransducer.constant<Env, X, Env, B>(Sum<X, B>.Left(value)));
 }

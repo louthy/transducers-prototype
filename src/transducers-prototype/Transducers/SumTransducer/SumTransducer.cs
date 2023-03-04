@@ -4,7 +4,7 @@ namespace LanguageExt;
 
 public abstract record SumTransducer<X, Y, A, B> : 
     Transducer<Sum<X, A>, Sum<Y, B>>, 
-    K<Any, X, Y, A, B> 
+    KArr<Any, X, Y, A, B> 
 {
     /// <summary>
     /// Lifts this `SumTransducer` into a `SumTransducerAsync` space.     

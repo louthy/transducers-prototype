@@ -101,7 +101,39 @@ public static class SumTransducer
         SumTransducer<X, Y, E, F> j,
         SumTransducer<Y, Z, F, G> k) =>
         new ComposeSumTransducer<T, U, V, W, X, Y, Z, A, B, C, D, E, F, G>(f, g, h, i, j, k);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(SumTransducer<X, Y, A, SumTransducer<X, Y, A, B>> ff) =>
+        new FlattenSumTransducer1<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(SumTransducer<X, Y, A, SumTransducer<X, Y, Unit, B>> ff) =>
+        new FlattenSumTransducer2<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(SumTransducer<X, Y, A, SumTransducer<Unit, Unit, Unit, B>> ff) =>
+        new FlattenSumTransducer3<X, Y, A, B>(ff);
     
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<Env, X, Env, B> flatten<Env, X, B>(SumTransducer<Env, X, Env, SumTransducer<Unit, X, Unit, B>> ff) =>
+        new FlattenSumTransducer4<Env, X, Env, B>(ff);
+
     /// <summary>
     /// Identity transducer
     /// </summary>
@@ -224,7 +256,10 @@ public static class SumTransducer
         SumTransducer<X, Y, A, B> m,
         Transducer<B, SumTransducer<X, Y, A, C>> f) =>
         new SumBindTransducer1<X, Y, A , B, C>(m, f);
-    
-    public static SumTransducer<X, Y, A, B> ignore<X, Y, A, B>(SumTransducer<Unit, Unit, Unit, B> m) =>
-        Transducer.ignore<Sum<X, A>, Sum<Y, B>>(m)
+
+    /// <summary>
+    /// Lifts a unit accepting transducer, ignores the input value.
+    /// </summary>
+    public static SumTransducer<X, Y, A, B> ignore<X, Y, A, B>(SumTransducer<Unit, Y, Unit, B> m) =>
+        new IgnoreSumTransducer<X, Y, A, B>(m);
 }

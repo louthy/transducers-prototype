@@ -2,12 +2,12 @@
 
 
 /*
-public interface K<M, E, A>
+public interface KArr<M, E, A>
 {
     Transducer<E, A> Morphism { get; }
 }
 
-public interface K<M, A> : K<M, Unit, A>
+public interface KArr<M, A> : KArr<M, Unit, A>
 {
 }
 
@@ -45,44 +45,44 @@ public interface Foldable<out A>
 /*
 public interface Functor<F, E>
 {
-    public static abstract K<F, E, B> Map<A, B>(K<F, E, A> fa, Func<A, B> f); 
-    public static abstract K<F, E, B> Map<A, B>(K<F, E, A> fa, Transducer<A, B> f); 
+    public static abstract KArr<F, E, B> Map<A, B>(KArr<F, E, A> fa, Func<A, B> f); 
+    public static abstract KArr<F, E, B> Map<A, B>(KArr<F, E, A> fa, Transducer<A, B> f); 
 }
 #1#
 
 public interface FunctorE<F>
 {
-    public static abstract K<F, E, B> Map<E, A, B>(K<F, E, A> fa, Func<A, B> f); 
-    public static abstract K<F, E, B> Map<E, A, B>(K<F, E, A> fa, Transducer<A, B> f); 
+    public static abstract KArr<F, E, B> Map<E, A, B>(KArr<F, E, A> fa, Func<A, B> f); 
+    public static abstract KArr<F, E, B> Map<E, A, B>(KArr<F, E, A> fa, Transducer<A, B> f); 
 }
 
 public interface Functor<F>
 {
-    public static abstract K<F, B> Map<A, B>(K<F, A> fa, Func<A, B> f); 
-    public static abstract K<F, B> Map<A, B>(K<F, A> fa, Transducer<A, B> f); 
+    public static abstract KArr<F, B> Map<A, B>(KArr<F, A> fa, Func<A, B> f); 
+    public static abstract KArr<F, B> Map<A, B>(KArr<F, A> fa, Transducer<A, B> f); 
 }
 
 public interface ApplicativeE<F> : FunctorE<F>
 {
-    public static abstract K<F, E, A> Pure<E, A>(A value); 
-    public static abstract K<F, E, B> Apply<E, A, B>(K<F, E, Func<A, B>> ff, K<F, E, A> fa);
+    public static abstract KArr<F, E, A> Pure<E, A>(A value); 
+    public static abstract KArr<F, E, B> Apply<E, A, B>(KArr<F, E, Func<A, B>> ff, KArr<F, E, A> fa);
 }
 
 public interface Applicative<F> : Functor<F>
 {
-    public static abstract K<F, A> Pure<A>(A value); 
-    public static abstract K<F, B> Apply<A, B>(K<F, Func<A, B>> ff, K<F, A> fa);
+    public static abstract KArr<F, A> Pure<A>(A value); 
+    public static abstract KArr<F, B> Apply<A, B>(KArr<F, Func<A, B>> ff, KArr<F, A> fa);
 }
 
 public interface MonadReader<F> : ApplicativeE<F>
 {
-    public static abstract K<F, E, A> Lift<E, A>(Transducer<E, A> f);
-    public static abstract K<F, E, B> Bind<E, A, B>(K<F, E, A> ma, Func<A, K<F, E, B>> f);
+    public static abstract KArr<F, E, A> Lift<E, A>(Transducer<E, A> f);
+    public static abstract KArr<F, E, B> Bind<E, A, B>(KArr<F, E, A> ma, Func<A, KArr<F, E, B>> f);
 }
 
 public interface Monad<F> : Applicative<F>
 {
-    public static abstract K<F, A> Lift<A>(Transducer<Unit, A> f);
-    public static abstract K<F, B> Bind<A, B>(K<F, A> ma, Func<A, K<F, B>> f);
+    public static abstract KArr<F, A> Lift<A>(Transducer<Unit, A> f);
+    public static abstract KArr<F, B> Bind<A, B>(KArr<F, A> ma, Func<A, KArr<F, B>> f);
 }
 */

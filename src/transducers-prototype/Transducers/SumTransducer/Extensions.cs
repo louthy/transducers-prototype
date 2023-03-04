@@ -1,4 +1,6 @@
-﻿namespace LanguageExt;
+﻿using LanguageExt.HKT;
+
+namespace LanguageExt;
 
 public static partial class Transducer
 {
@@ -75,4 +77,37 @@ public static partial class Transducer
         this SumTransducer<X, Y, A, Func<B, C>> ff,
         SumTransducer<X, Y, A, B> fa) =>
         new SumApplyTransducer<X, Y, A, B, C>(ff, fa);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> Flatten<X, Y, A, B>(this SumTransducer<X, Y, A, SumTransducer<X, Y, A, B>> ff) =>
+        new FlattenSumTransducer1<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> Flatten<X, Y, A, B>(this SumTransducer<X, Y, A, SumTransducer<X, Y, Unit, B>> ff) =>
+        new FlattenSumTransducer2<X, Y, A, B>(ff);
+    
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> Flatten<X, Y, A, B>(this SumTransducer<X, Y, A, SumTransducer<Unit, Unit, Unit, B>> ff) =>
+        new FlattenSumTransducer3<X, Y, A, B>(ff);
+    
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<Env, X, Env, B> Flatten<Env, X, B>(this SumTransducer<Env, X, Env, SumTransducer<Unit, X, Unit, B>> ff) =>
+        new FlattenSumTransducer4<Env, X, Env, B>(ff);
+
 }

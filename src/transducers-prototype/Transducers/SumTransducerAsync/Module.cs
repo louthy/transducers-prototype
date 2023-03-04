@@ -103,6 +103,72 @@ public static class SumTransducerAsync
         new ComposeSumTransducerAsync<T, U, V, W, X, Y, Z, A, B, C, D, E, F, G>(f, g, h, i, j, k);
     
     /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<X, Y, A, B> flatten<X, Y, A, B>(SumTransducerAsync<X, Y, A, SumTransducerAsync<X, Y, A, B>> ff) =>
+        new FlattenSumTransducerAsync1<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<X, Y, A, B> flatten<X, Y, A, B>(SumTransducerAsync<X, Y, A, SumTransducerAsync<X, Y, Unit, B>> ff) =>
+        new FlattenSumTransducerAsync2<X, Y, A, B>(ff);
+    
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<X, Y, A, B> flatten<X, Y, A, B>(SumTransducerAsync<X, Y, A, SumTransducer<X, Y, A, B>> ff) =>
+        new FlattenSumTransducerAsyncSync1<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<X, Y, A, B> flatten<X, Y, A, B>(SumTransducerAsync<X, Y, A, SumTransducer<X, Y, Unit, B>> ff) =>
+        new FlattenSumTransducerAsyncSync2<X, Y, A, B>(ff);
+    
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<X, Y, A, B> flatten<X, Y, A, B>(SumTransducerAsync<X, Y, A, SumTransducerAsync<Unit, Unit, Unit, B>> ff) =>
+        new FlattenSumTransducerAsync3<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<X, Y, A, B> flatten<X, Y, A, B>(SumTransducerAsync<X, Y, A, SumTransducer<Unit, Unit, Unit, B>> ff) =>
+        new FlattenSumTransducerAsyncSync3<X, Y, A, B>(ff);
+        
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<Env, X, Env, B> flatten<Env, X, B>(
+        SumTransducerAsync<Env, X, Env, SumTransducer<Unit, X, Unit, B>> ff) =>
+        new FlattenSumTransducerAsyncSync4<Env, X, Env, B>(ff);
+    
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducerAsync<Env, X, Env, B> flatten<Env, X, B>(
+        SumTransducerAsync<Env, X, Env, SumTransducerAsync<Unit, X, Unit, B>> ff) =>
+        new FlattenSumTransducerAsync4<Env, X, Env, B>(ff);
+
+    /// <summary>
     /// Identity transducer
     /// </summary>
     public static SumTransducerAsync<X, X, A, A> identity<X, A>() =>
@@ -254,5 +320,12 @@ public static class SumTransducerAsync
     public static SumTransducerAsync<X, Y, A, C> bind<X, Y, A, B, C>(
         SumTransducerAsync<X, Y, A, B> m,
         TransducerAsync<B, SumTransducer<X, Y, A, C>> f) =>
-        new SumBindTransducerAsyncSync1<X, Y, A , B, C>(m, f);    
+        new SumBindTransducerAsyncSync1<X, Y, A , B, C>(m, f);
+
+    /// <summary>
+    /// Lifts a unit accepting transducer, ignores the input value.
+    /// </summary>
+    public static SumTransducerAsync<X, Y, A, B> ignore<X, Y, A, B>(SumTransducerAsync<Unit, Y, Unit, B> m) =>
+        new IgnoreSumTransducerAsync<X, Y, A, B>(m);
+    
 }

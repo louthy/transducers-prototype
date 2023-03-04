@@ -9,7 +9,7 @@ public interface Apply<F> : Functor<F>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, A, C> Ap<A, B, C>(K<F, A, Func<B, C>> f, K<F, A, B> x);
+    public static abstract KArr<F, A, C> Ap<A, B, C>(KArr<F, A, Func<B, C>> f, KArr<F, A, B> x);
 }
 
 /// <summary>
@@ -21,5 +21,5 @@ public interface Apply<F, A> : Functor<F, A>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, A, C> Ap<B, C>(K<F, A, Func<B, C>> f, K<F, A, B> x);
+    public static abstract KArr<F, A, C> Ap<B, C>(KArr<F, A, Func<B, C>> f, KArr<F, A, B> x);
 }

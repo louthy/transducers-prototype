@@ -12,7 +12,7 @@ namespace LanguageExt;
 /// </summary>
 /// <typeparam name="A">Input value type</typeparam>
 /// <typeparam name="B">Output value type</typeparam>
-public abstract record Transducer<A, B> : K<Any, A, B>
+public abstract record Transducer<A, B> : KArr<Any, A, B>
 {
     /// <summary>
     /// Self access

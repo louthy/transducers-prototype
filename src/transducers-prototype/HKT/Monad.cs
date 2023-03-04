@@ -9,19 +9,19 @@ public interface Monad<M> : Applicative<M>
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static abstract K<M, A, C> Bind<A, B, C>(K<M, A, B> mx, Transducer<B, K<M, A, C>> f);
+    public static abstract KArr<M, A, C> Bind<A, B, C>(KArr<M, A, B> mx, Transducer<B, KArr<M, A, C>> f);
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, A, C> Bind<A, B, C>(K<M, A, B> mx, Func<B, K<M, A, C>> f) =>
+    public static virtual KArr<M, A, C> Bind<A, B, C>(KArr<M, A, B> mx, Func<B, KArr<M, A, C>> f) =>
         M.Bind(mx, Transducer.lift(f));
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, A, B> Flatten<A, B>(K<M, A, K<M, A, B>> mmx) =>
-        M.Bind(mmx, Transducer.identity<K<M, A, B>>());
+    public static virtual KArr<M, A, B> Flatten<A, B>(KArr<M, A, KArr<M, A, B>> mmx) =>
+        M.Bind(mmx, Transducer.identity<KArr<M, A, B>>());
 }
 
 /// <summary>
@@ -33,17 +33,17 @@ public interface Monad<M, A> : Applicative<M, A>
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static abstract K<M, A, C> Bind<B, C>(K<M, A, B> mx, Transducer<B, K<M, A, C>> f);
+    public static abstract KArr<M, A, C> Bind<B, C>(KArr<M, A, B> mx, Transducer<B, KArr<M, A, C>> f);
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, A, C> Bind<B, C>(K<M, A, B> mx, Func<B, K<M, A, C>> f) =>
+    public static virtual KArr<M, A, C> Bind<B, C>(KArr<M, A, B> mx, Func<B, KArr<M, A, C>> f) =>
         M.Bind(mx, Transducer.lift(f));
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual K<M, A, B> Flatten<B>(K<M, A, K<M, A, B>> mmx) =>
-        M.Bind(mmx, Transducer.identity<K<M, A, B>>());
+    public static virtual KArr<M, A, B> Flatten<B>(KArr<M, A, KArr<M, A, B>> mmx) =>
+        M.Bind(mmx, Transducer.identity<KArr<M, A, B>>());
 }

@@ -9,9 +9,9 @@ public interface ApplySum<F> : FunctorSum<F>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, X, Y, A, C> Ap<X, Y, A, B, C>(
-        K<F, X, Y, A, Func<B, C>> f,  
-        K<F, X, Y, A, B> x);
+    public static abstract KArr<F, X, Y, A, C> Ap<X, Y, A, B, C>(
+        KArr<F, X, Y, A, Func<B, C>> f,  
+        KArr<F, X, Y, A, B> x);
 }
 
 /// <summary>
@@ -23,21 +23,21 @@ public interface ApplySum<F, X> : FunctorSum<F, X>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, X, X, A, C> Ap<A, B, C>(
-        K<F, X, X, A, Func<B, C>> f,
-        K<F, X, X, A, B> x);
+    public static abstract KArr<F, X, X, Env, B> Ap<Env, A, B>(
+        KArr<F, Env, X, Env, Func<A, B>> f,
+        KArr<F, Env, X, Env, A> x);
 }
 
 /// <summary>
 /// Applicative trait with fixed input type
 /// </summary>
-public interface ApplySum<F, X, A> : FunctorSum<F, X, A> 
-    where F : ApplySum<F, X, A>
+public interface ApplySum2<F, Env, X> : FunctorSum2<F, Env, X> 
+    where F : ApplySum2<F, Env, X>
 {
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract K<F, X, X, A, C> Ap<B, C>(
-        K<F, X, X, A,Func<B, C>> f,  
-        K<F, X, X, A, B> x);
+    public static abstract KArr<F, Env, X, Env, B> Ap<A, B>(
+        KArr<F, Env, X, Env,Func<A, B>> f,  
+        KArr<F, Env, X, Env, A> x);
 }
