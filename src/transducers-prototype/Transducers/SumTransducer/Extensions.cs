@@ -35,6 +35,24 @@ public static partial class Transducer
     /// <returns>Monadic bound transducer</returns>
     public static SumTransducer<X, Y, A, C> Bind<X, Y, A, B, C>(
         this SumTransducer<X, Y, A, B> m, 
+        Func<B, Transducer<A, C>> g) =>
+        new SumBindTransducer3A<X, Y, A, B, C>(m, g);
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducer<X, Y, A, C> Bind<X, Y, A, B, C>(
+        this Transducer<A, B> m, 
+        Func<B, SumTransducer<X, Y, A, C>> g) =>
+        new SumBindTransducer3B<X, Y, A, B, C>(m, g);
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducer<X, Y, A, C> Bind<X, Y, A, B, C>(
+        this SumTransducer<X, Y, A, B> m, 
         Transducer<B, SumTransducer<X, Y, A, C>> g) =>
         new SumBindTransducer1<X, Y, A, B, C>(m, g);
 
@@ -62,6 +80,26 @@ public static partial class Transducer
     /// <returns>Monadic bound transducer</returns>
     public static SumTransducer<X, Y, A, D> SelectMany<X, Y, A, B, C, D>(
         this SumTransducer<X, Y, A, B> m, 
+        Func<B, SumTransducer<X, Y, A, C>> g,
+        Func<B, C, D> project) =>
+        m.Bind(x => g(x).Map(y => project(x, y)));    
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducer<X, Y, A, D> SelectMany<X, Y, A, B, C, D>(
+        this SumTransducer<X, Y, A, B> m, 
+        Func<B, Transducer<A, C>> g,
+        Func<B, C, D> project) =>
+        m.Bind(x => g(x).Map(y => project(x, y)));    
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducer<X, Y, A, D> SelectMany<X, Y, A, B, C, D>(
+        this Transducer<A, B> m, 
         Func<B, SumTransducer<X, Y, A, C>> g,
         Func<B, C, D> project) =>
         m.Bind(x => g(x).Map(y => project(x, y)));    

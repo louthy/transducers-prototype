@@ -2,7 +2,7 @@
 
 namespace LanguageExt.Examples;
 
-public abstract record Maybe;
+/*public abstract record Maybe;
 
 /// <summary>
 /// Maybe data-type
@@ -13,14 +13,14 @@ public abstract record Maybe<A> : Maybe
     public static readonly Maybe<A> Nothing = new NothingCase<A>();
 }
 public record JustCase<A>(A Value): Maybe<A>;
-public record NothingCase<A> : Maybe<A>;
+public record NothingCase<A> : Maybe<A>;*/
 
 /// <summary>
 /// Maybe transformer
 /// </summary>
 public readonly record struct MaybeT<M, Env, X, A>(SumTransducer<Env, X, Env, SumTransducer<Unit, Unit, Unit, A>> MorphismUnsafe) : 
     KArr<M, Env,X, Env, SumTransducer<Unit, Unit, Unit, A>>
-    where M : MonadSum2<M, Env, X>
+    where M : MonadSum<M, Env, X>
 {
     Transducer<Sum<Env, Env>, Sum<X, SumTransducer<Unit, Unit, Unit, A>>> KArr<M, Sum<Env, Env>, Sum<X, SumTransducer<Unit, Unit, Unit, A>>>.Morphism => 
         MorphismUnsafe.Morphism;
@@ -59,8 +59,8 @@ public readonly record struct MaybeT<M, Env, X, A>(SumTransducer<Env, X, Env, Su
             .Flatten();
 }
 
-public readonly struct _MaybeT<M, Env, X> : MonadSum2<M, Env, X>
-    where M : MonadSum2<M, Env, X>
+public readonly struct MaybeT<M, Env, X> : MonadSum<M, Env, X>
+    where M : MonadSum<M, Env, X>
 {
     public static KArr<M, Env, X, Env, B> BiMap<A, B>(KArr<M, Env, X, Env, A> fab, Transducer<X, X> Left, Transducer<A, B> Right)
     {

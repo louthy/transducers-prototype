@@ -51,8 +51,8 @@ public readonly record struct Option<A>(SumTransducer<Unit, Unit, Unit, A> Morph
 }
 
 public readonly struct Option : 
-    MonadSum2<Option, Unit, Unit>, 
-    ApplySum2<Option, Unit, Unit>
+    MonadSum<Option, Unit, Unit>, 
+    ApplySum<Option, Unit, Unit>
 {
     public static KArr<Option, Unit, Unit, Unit, A> Lift<A>(SumTransducer<Unit, Unit, Unit, A> f) =>
         new Option<A>(f);
@@ -81,7 +81,7 @@ public static class Test
             F.Ap(F.Ap(F.Pure(addF), mx), my);
 
     public static KArr<F, Env, X, Env, int> Add<F, Env, X>(KArr<F, Env, X, Env, int> mx, KArr<F, Env, X, Env, int> my)
-        where F : ApplySum2<F, Env, X>, ApplicativeSum2<F, Env, X> =>
+        where F : ApplySum<F, Env, X>, ApplicativeSum<F, Env, X> =>
             F.Ap(F.Ap(F.Pure(addF), mx), my);
 
     public static Func<int, Func<int, int>> addF = 

@@ -31,6 +31,24 @@ public static partial class TransducerAsync
     /// <returns>Monadic bound transducer</returns>
     public static SumTransducerAsync<X, Y, A, C> Bind<X, Y, A, B, C>(
         this SumTransducerAsync<X, Y, A, B> m, 
+        Func<B, TransducerAsync<A, C>> g) =>
+        new SumBindTransducerAsync3A<X, Y, A, B, C>(m, g);
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducerAsync<X, Y, A, C> Bind<X, Y, A, B, C>(
+        this TransducerAsync<A, B> m, 
+        Func<B, SumTransducerAsync<X, Y, A, C>> g) =>
+        new SumBindTransducerAsync3B<X, Y, A, B, C>(m, g);
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducerAsync<X, Y, A, C> Bind<X, Y, A, B, C>(
+        this SumTransducerAsync<X, Y, A, B> m, 
         TransducerAsync<B, SumTransducerAsync<X, Y, A, C>> g) =>
         new SumBindTransducerAsync1<X, Y, A, B, C>(m, g);
 
@@ -70,7 +88,27 @@ public static partial class TransducerAsync
         Func<B, SumTransducerAsync<X, Y, A, C>> g,
         Func<B, C, D> project) =>
         m.Bind(x => g(x).Map(y => project(x, y)));      
+
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducerAsync<X, Y, A, D> SelectMany<X, Y, A, B, C, D>(
+        this SumTransducerAsync<X, Y, A, B> m, 
+        Func<B, TransducerAsync<A, C>> g,
+        Func<B, C, D> project) =>
+        m.Bind(x => g(x).Map(y => project(x, y)));      
     
+    /// <summary>
+    /// Projects every value into the monadic bind function provided. 
+    /// </summary>
+    /// <returns>Monadic bound transducer</returns>
+    public static SumTransducerAsync<X, Y, A, D> SelectMany<X, Y, A, B, C, D>(
+        this TransducerAsync<A, B> m, 
+        Func<B, SumTransducerAsync<X, Y, A, C>> g,
+        Func<B, C, D> project) =>
+        m.Bind(x => g(x).Map(y => project(x, y)));      
+
     /// <summary>
     /// Applicative apply
     /// </summary>

@@ -110,8 +110,8 @@ public interface ApplicativeSum<F, X> : FunctorSum<F, X>
 /// <summary>
 /// Applicative pure trait with fixed left type and input type
 /// </summary>
-public interface ApplicativeSum2<F, Env, X> : FunctorSum2<F, Env, X> 
-    where F : ApplicativeSum2<F, Env, X>
+public interface ApplicativeSum<F, Env, X> : FunctorSum<F, Env, X> 
+    where F : ApplicativeSum<F, Env, X>
 {
     /// <summary>
     /// Lift transducer into applicative

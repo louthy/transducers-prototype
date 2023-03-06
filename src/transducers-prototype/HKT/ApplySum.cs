@@ -31,8 +31,8 @@ public interface ApplySum<F, X> : FunctorSum<F, X>
 /// <summary>
 /// Applicative trait with fixed input type
 /// </summary>
-public interface ApplySum2<F, Env, X> : FunctorSum2<F, Env, X> 
-    where F : ApplySum2<F, Env, X>
+public interface ApplySum<F, Env, X> : FunctorSum<F, Env, X> 
+    where F : ApplySum<F, Env, X>
 {
     /// <summary>
     /// Applicative apply

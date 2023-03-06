@@ -172,3 +172,153 @@ record SumBindTransducerAsync3<X, Y, A, B, C>(
             };
     }
 }
+
+record SumBindTransducerAsyncSync3A<X, Y, A, B, C>(
+    TransducerAsync<Sum<X, A>, Sum<Y, B>> M, 
+    Func<B, Transducer<A, C>> F) : 
+    SumTransducerAsync<X, Y, A, C>
+{
+    public override ReducerAsync<S, Sum<X, A>> Transform<S>(ReducerAsync<S, Sum<Y, C>> reduce) =>
+        new Reduce<S>(M, F, reduce);
+
+    internal record Reduce<S>(
+            TransducerAsync<Sum<X, A>, Sum<Y, B>> M, 
+            Func<B, Transducer<A, C>> F, 
+            ReducerAsync<S, Sum<Y, C>> Reducer) 
+        : ReducerAsync<S, Sum<X, A>>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, Sum<X, A> value) =>
+            value switch
+            {
+                SumRight<X, A> r =>
+                    M.Transform(new Binder1<S>(r.Value, F, Reducer)).Run(st, s, value),
+
+                SumLeft<X, A> =>
+                    TResultAsync.Continue(s),
+
+                _ =>
+                    TResultAsync.Complete(s)
+            };
+    }
+    
+    internal record Binder1<S>(
+            A Value, 
+            Func<B, Transducer<A, C>> F, 
+            ReducerAsync<S, Sum<Y, C>> Reducer) 
+        : ReducerAsync<S, Sum<Y, B>>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, Sum<Y, B> value) =>
+            value switch
+            {
+                SumRight<Y, B> r =>
+                    TResultAsync.Recursive(st, s, Value, F(r.Value).ToAsync().Transform(new MapRight<S>(Reducer))),
+
+                SumLeft<Y, B> =>
+                    TResultAsync.Continue(s),
+
+                _ =>
+                    TResultAsync.Complete(s)
+            };
+    }
+        
+    internal record MapRight<S>(ReducerAsync<S, Sum<Y, C>> Reducer) 
+        : ReducerAsync<S, C>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, C value) =>
+            Reducer.Run(st, s, Sum<Y, C>.Right(value));
+    }
+}
+
+record SumBindTransducerAsync3A<X, Y, A, B, C>(
+    TransducerAsync<Sum<X, A>, Sum<Y, B>> M, 
+    Func<B, TransducerAsync<A, C>> F) : 
+    SumTransducerAsync<X, Y, A, C>
+{
+    public override ReducerAsync<S, Sum<X, A>> Transform<S>(ReducerAsync<S, Sum<Y, C>> reduce) =>
+        new Reduce<S>(M, F, reduce);
+
+    internal record Reduce<S>(
+            TransducerAsync<Sum<X, A>, Sum<Y, B>> M, 
+            Func<B, TransducerAsync<A, C>> F, 
+            ReducerAsync<S, Sum<Y, C>> Reducer) 
+        : ReducerAsync<S, Sum<X, A>>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, Sum<X, A> value) =>
+            value switch
+            {
+                SumRight<X, A> r =>
+                    M.Transform(new Binder1<S>(r.Value, F, Reducer)).Run(st, s, value),
+
+                SumLeft<X, A> =>
+                    TResultAsync.Continue(s),
+
+                _ =>
+                    TResultAsync.Complete(s)
+            };
+    }
+    
+    internal record Binder1<S>(
+            A Value, 
+            Func<B, TransducerAsync<A, C>> F, 
+            ReducerAsync<S, Sum<Y, C>> Reducer) 
+        : ReducerAsync<S, Sum<Y, B>>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, Sum<Y, B> value) =>
+            value switch
+            {
+                SumRight<Y, B> r =>
+                    TResultAsync.Recursive(st, s, Value, F(r.Value).Transform(new MapRight<S>(Reducer))),
+
+                SumLeft<Y, B> =>
+                    TResultAsync.Continue(s),
+
+                _ =>
+                    TResultAsync.Complete(s)
+            };
+    }
+        
+    internal record MapRight<S>(ReducerAsync<S, Sum<Y, C>> Reducer) 
+        : ReducerAsync<S, C>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, C value) =>
+            Reducer.Run(st, s, Sum<Y, C>.Right(value));
+    }
+}
+
+record SumBindTransducerAsync3B<X, Y, A, B, C>(
+    TransducerAsync<A, B> M,
+    Func<B, TransducerAsync<Sum<X, A>, Sum<Y, C>>> F) :
+    SumTransducerAsync<X, Y, A, C>
+{
+    public override ReducerAsync<S, Sum<X, A>> Transform<S>(ReducerAsync<S, Sum<Y, C>> reduce) =>
+        new Reduce<S>(M, F, reduce);
+
+    internal record Reduce<S>(
+            TransducerAsync<A, B> M,
+            Func<B, TransducerAsync<Sum<X, A>, Sum<Y, C>>> F, ReducerAsync<S, Sum<Y, C>> Reducer)
+        : ReducerAsync<S, Sum<X, A>>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, Sum<X, A> value) =>
+            value switch
+            {
+                SumRight<X, A> r =>
+                    M.Transform(new Binder1<S>(r.Value, F, Reducer)).Run(st, s, r.Value),
+
+                SumLeft<X, A> =>
+                    TResultAsync.Continue(s),
+
+                _ =>
+                    TResultAsync.Complete(s)
+            };
+    }
+
+    internal record Binder1<S>(
+            A Value,
+            Func<B, TransducerAsync<Sum<X, A>, Sum<Y, C>>> F,
+            ReducerAsync<S, Sum<Y, C>> Reducer)
+        : ReducerAsync<S, B>
+    {
+        public override ValueTask<TResultAsync<S>> Run(TState st, S s, B value) =>
+            TResultAsync.Recursive(st, s, Sum<X, A>.Right(Value), F(value).Transform(Reducer));
+    }
+}

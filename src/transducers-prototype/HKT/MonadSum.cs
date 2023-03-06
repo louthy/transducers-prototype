@@ -61,8 +61,8 @@ public interface MonadSum<M, X> : ApplicativeSum<M, X>
 /// <summary>
 /// Monad bind trait with fixed left type and input type
 /// </summary>
-public interface MonadSum2<M, Env, X> : ApplicativeSum2<M, Env, X> 
-    where M : MonadSum2<M, Env, X>
+public interface MonadSum<M, Env, X> : ApplicativeSum<M, Env, X> 
+    where M : MonadSum<M, Env, X>
 {
     /// <summary>
     /// Monad bind

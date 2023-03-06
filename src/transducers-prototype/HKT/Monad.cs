@@ -9,41 +9,41 @@ public interface Monad<M> : Applicative<M>
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static abstract KArr<M, A, C> Bind<A, B, C>(KArr<M, A, B> mx, Transducer<B, KArr<M, A, C>> f);
+    public static abstract KArr<M, Env, B> Bind<Env, A, B>(KArr<M, Env, A> mx, Transducer<A, KArr<M, Env, B>> f);
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual KArr<M, A, C> Bind<A, B, C>(KArr<M, A, B> mx, Func<B, KArr<M, A, C>> f) =>
+    public static virtual KArr<M, Env, B> Bind<Env, A, B>(KArr<M, Env, A> mx, Func<A, KArr<M, Env, B>> f) =>
         M.Bind(mx, Transducer.lift(f));
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual KArr<M, A, B> Flatten<A, B>(KArr<M, A, KArr<M, A, B>> mmx) =>
-        M.Bind(mmx, Transducer.identity<KArr<M, A, B>>());
+    public static virtual KArr<M, Env, A> Flatten<Env, A>(KArr<M, Env, KArr<M, Env, A>> mmx) =>
+        M.Bind(mmx, Transducer.identity<KArr<M, Env, A>>());
 }
 
 /// <summary>
 /// Monad bind trait with fixed input type
 /// </summary>
-public interface Monad<M, A> : Applicative<M, A> 
-    where M : Monad<M, A>
+public interface Monad<M, Env> : Applicative<M, Env> 
+    where M : Monad<M, Env>
 {
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static abstract KArr<M, A, C> Bind<B, C>(KArr<M, A, B> mx, Transducer<B, KArr<M, A, C>> f);
+    public static abstract KArr<M, Env, B> Bind<A, B>(KArr<M, Env, A> mx, Transducer<A, KArr<M, Env, B>> f);
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual KArr<M, A, C> Bind<B, C>(KArr<M, A, B> mx, Func<B, KArr<M, A, C>> f) =>
+    public static virtual KArr<M, Env, B> Bind<A, B>(KArr<M, Env, A> mx, Func<A, KArr<M, Env, B>> f) =>
         M.Bind(mx, Transducer.lift(f));
 
     /// <summary>
     /// Monad bind
     /// </summary>
-    public static virtual KArr<M, A, B> Flatten<B>(KArr<M, A, KArr<M, A, B>> mmx) =>
-        M.Bind(mmx, Transducer.identity<KArr<M, A, B>>());
+    public static virtual KArr<M, Env, A> Flatten<A>(KArr<M, Env, KArr<M, Env, A>> mmx) =>
+        M.Bind(mmx, Transducer.identity<KArr<M, Env, A>>());
 }

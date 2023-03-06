@@ -2,12 +2,14 @@
 using LanguageExt.Examples;
 using static LanguageExt.Transducer;
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Transducer bind tests
 var mx = SumTransducer.Right<Unit, int>(100); 
 var my = SumTransducer.Right<Unit, int>(299);
 var mf = SumTransducer.Left<Unit, int>(default);
-var mz = from x in mx
+var mz = from b in lift<Unit, int>(_ => 100)
+         from x in mx
          from y in my
          from _ in mf
          select x + y;

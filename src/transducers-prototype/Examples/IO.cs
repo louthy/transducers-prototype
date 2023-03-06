@@ -12,7 +12,7 @@ public record IO<Env, X, A>(SumTransducer<Env, X, Env, A> MorphismValue) :
         MorphismValue;
 }
 
-public readonly struct IO<Env, X> : MonadSum2<IO<Env, X>, Env, X>
+public readonly struct IO<Env, X> : MonadSum<IO<Env, X>, Env, X>
 {
     public static KArr<IO<Env, X>, Env, X, Env, B> BiMap<A, B>(
         KArr<IO<Env, X>, Env, X, Env, A> fab, 

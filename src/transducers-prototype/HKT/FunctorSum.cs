@@ -119,7 +119,7 @@ public interface FunctorSum<F, X> where F : FunctorSum<F, X>
 /// <typeparam name="F">Bi-functor type</typeparam>
 /// <typeparam name="X">Constrained left type</typeparam>
 /// <typeparam name="Env">Lower-kind bound type</typeparam>
-public interface FunctorSum2<F, Env, X> where F : FunctorSum2<F, Env, X>
+public interface FunctorSum<F, Env, X> where F : FunctorSum<F, Env, X>
 {
     /// <summary>
     /// Bi-map from `X|A -> Y|B` to `X|A -> Y|B -> Z|C` 
