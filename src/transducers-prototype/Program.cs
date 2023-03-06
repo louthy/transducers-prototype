@@ -2,6 +2,10 @@
 using LanguageExt.Examples;
 using static LanguageExt.Transducer;
 
+Func<string, int> foo = x => x.Length;
+
+var task = foo.BeginInvoke("Hello", null, null);
+var res = foo.EndInvoke(task);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Transducer bind tests
