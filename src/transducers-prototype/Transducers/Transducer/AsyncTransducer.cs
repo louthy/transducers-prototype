@@ -11,17 +11,21 @@ record AsyncTransducer<Env, A>(Transducer<Env, ValueTask<A>> MorphismValue) :
         throw new NotImplementedException();
     }
 
-    internal record Reducer1<S>(Reducer<S, A> Reducer) : Reducer<S, ValueTask<A>>
+    record Reducer1<S>(Reducer<S, A> Reducer) : Reducer<S, ValueTask<A>>
     {
         public override TResult<S> Run(TState st, S s, ValueTask<A> value)
         {
+            // Shortcut for tasks that are already completed, or never started because
+            // they're just values.
+            if (value.IsCompletedSuccessfully) return Reducer.Run(st, s, value.Result);
+            
             var result = TResult.Complete(s);
-            using var wait = new AutoResetEvent(false);
+            using var wait = new ManualResetEventSlim (false);
             Go(value, wait);
-            wait.WaitOne();
+            wait.Wait();
             return result;
 
-            async ValueTask Go(ValueTask<A> t, AutoResetEvent handle)
+            async ValueTask Go(ValueTask<A> t, ManualResetEventSlim handle)
             {
                 result = Reducer.Run(st, s, await t.ConfigureAwait(false));
                 handle.Set();
@@ -42,17 +46,17 @@ record AsyncSumTransducer<Env, A>(SumTransducer<Env, ValueTask<Error>, Env, Valu
     public override Reducer<S, Sum<Env, Env>> Transform<S>(Reducer<S, Sum<Error, A>> reduce) =>
         MorphismValue.Transform(new Reducer1<S>(reduce));
 
-    internal record Reducer1<S>(Reducer<S, Sum<Error, A>> Reducer) : Reducer<S, Sum<ValueTask<Error>, ValueTask<A>>>
+    record Reducer1<S>(Reducer<S, Sum<Error, A>> Reducer) : Reducer<S, Sum<ValueTask<Error>, ValueTask<A>>>
     {
         public override TResult<S> Run(TState st, S s, Sum<ValueTask<Error>, ValueTask<A>> value)
         {
             var result = TResult.Complete(s);
-            using var wait = new AutoResetEvent(false);
+            using var wait = new ManualResetEventSlim(false);
             Go(value, wait);
-            wait.WaitOne();
+            wait.Wait();
             return result;
 
-            async ValueTask Go(Sum<ValueTask<Error>, ValueTask<A>> t, AutoResetEvent handle)
+            async ValueTask Go(Sum<ValueTask<Error>, ValueTask<A>> t, ManualResetEventSlim handle)
             {
                 try
                 {

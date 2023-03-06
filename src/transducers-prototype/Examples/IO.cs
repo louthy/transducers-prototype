@@ -2,35 +2,22 @@
 
 namespace LanguageExt.Examples;
 
-public record IO<Env, X, A>(SumTransducer<Env, X, Env, A> MorphismValue) : 
-    KArr<IO<Env, X>, Env, X, Env, A>
+public record IO<Env, A>(Transducer<Env, A> MorphismValue) : 
+    KArr<IO<Env>, Env, A>
 {
-    Transducer<Sum<Env, Env>, Sum<X, A>> KArr<IO<Env, X>, Sum<Env, Env>, Sum<X, A>>.Morphism => 
-        MorphismValue;
-
-    SumTransducer<Env, X, Env, A> KArr<IO<Env, X>, Env, X, Env, A>.Morphism => 
+    Transducer<Env, A> KArr<IO<Env>, Env, A>.Morphism => 
         MorphismValue;
 }
 
-public readonly struct IO<Env, X> : MonadSum<IO<Env, X>, Env, X>
+public readonly struct IO<Env> : Monad<IO<Env>, Env>
 {
-    public static KArr<IO<Env, X>, Env, X, Env, B> BiMap<A, B>(
-        KArr<IO<Env, X>, Env, X, Env, A> fab, 
-        Transducer<X, X> Left, 
-        Transducer<A, B> Right)
-    {
-        throw new NotImplementedException();
-    }
+    public static KArr<IO<Env>, Env, C> Map<B, C>(KArr<IO<Env>, Env, B> fab, Transducer<B, C> f) =>
+        new IO<Env, C>(Transducer.compose(fab.Morphism, f));
 
-    public static KArr<IO<Env, X>, Env, X, Env, A> Lift<A>(SumTransducer<Env, X, Env, A> f)
-    {
-        throw new NotImplementedException();
-    }
+    public static KArr<IO<Env>, Env, B> Lift<B>(Transducer<Env, B> f) =>
+        new IO<Env, B>(f);
 
-    public static KArr<IO<Env, X>, Env, X, Env, B> Bind<A, B>(
-        KArr<IO<Env, X>, Env, X, Env, A> mx, 
-        Transducer<A, KArr<IO<Env, X>, Env, X, Env, B>> f)
-    {
-        throw new NotImplementedException();
-    }
+    public static KArr<IO<Env>, Env, B> Bind<A, B>(KArr<IO<Env>, Env, A> mx, Transducer<A, KArr<IO<Env>, Env, B>> f) =>
+        new IO<Env, B>(Transducer.compose(mx.Morphism, f.Map(static x => x.Morphism)).Flatten());
+
 }

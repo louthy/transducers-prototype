@@ -2,14 +2,19 @@
 
 namespace LanguageExt.Examples;
 
-public record Either<L, R>(SumTransducer<Unit, L, Unit, SumTransducer<Unit, L, Unit, R>> MorphismValue) : 
-    EitherT<Identity<Unit, L>, Unit, L, R>(MorphismValue)
+public record Either<L, R>(Transducer<Unit, SumTransducer<Unit, L, Unit, R>> MorphismValue) : 
+    EitherT<Identity<Unit>, Unit, L, R>(MorphismValue)
 {
 }
 
-public record Eff<Env, A>(SumTransducer<Env, Error, Env, SumTransducer<Unit, Error, Unit, A>> MorphismValue) : 
-    EitherT<IO<Env, Error>, Env, Error, A>(MorphismValue)
+public record Eff<Env, A>(Transducer<Env, SumTransducer<Unit, Error, Unit, A>> MorphismValue) : 
+    EitherT<IO<Env>, Env, Error, A>(MorphismValue)
 {}
+
+public record Aff<Env, A>(Transducer<Env, SumTransducer<Unit, Error, Unit, A>> MorphismValue) : 
+    EitherT<Async<Env>, Env, Error, A>(MorphismValue)
+{
+}
 
 public static class EitherTests
 {
