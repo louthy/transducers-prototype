@@ -21,7 +21,9 @@ record AsyncTransducer<Env, A>(Transducer<Env, ValueTask<A>> MorphismValue) :
             
             var result = TResult.Complete(s);
             using var wait = new ManualResetEventSlim (false);
+            #pragma warning disable CS4014
             Go(value, wait);
+            #pragma warning restore CS4014
             wait.Wait();
             return result;
 
@@ -52,7 +54,9 @@ record AsyncSumTransducer<Env, A>(SumTransducer<Env, ValueTask<Error>, Env, Valu
         {
             var result = TResult.Complete(s);
             using var wait = new ManualResetEventSlim(false);
+            #pragma warning disable CS4014
             Go(value, wait);
+            #pragma warning restore CS4014
             wait.Wait();
             return result;
 

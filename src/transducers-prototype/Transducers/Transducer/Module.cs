@@ -128,6 +128,38 @@ public static partial class Transducer
         new FlattenTransducer2<A, B>(ff);
 
     /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(Transducer<A, SumTransducer<X, Y, A, B>> ff) =>
+        new FlattenSumTransducer5<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(Transducer<A, SumTransducer<X, Y, Unit, B>> ff) =>
+        new FlattenSumTransducer6<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(SumTransducer<X, Y, A, Transducer<A, B>> ff) =>
+        new FlattenSumTransducer7<X, Y, A, B>(ff);
+
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(SumTransducer<X, Y, A, Transducer<Unit, B>> ff) =>
+        new FlattenSumTransducer8<X, Y, A, B>(ff);
+
+    /// <summary>
     /// Applicative apply
     /// </summary>
     /// <remarks>

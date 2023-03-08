@@ -7,9 +7,10 @@ public record Either<L, R>(Transducer<Unit, SumTransducer<Unit, L, Unit, R>> Mor
 {
 }
 
-public record Eff<Env, A>(Transducer<Env, SumTransducer<Unit, Error, Unit, A>> MorphismValue) : 
+public record Eff<Env, A>(Transducer<Env, SumTransducer<Unit, Error, Unit, A>> MorphismValue) :
     EitherT<IO<Env>, Env, Error, A>(MorphismValue)
-{}
+{
+}
 
 public record Aff<Env, A>(Transducer<Env, SumTransducer<Unit, Error, Unit, A>> MorphismValue) : 
     EitherT<Async<Env>, Env, Error, A>(MorphismValue)

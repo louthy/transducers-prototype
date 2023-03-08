@@ -28,11 +28,7 @@ public record EitherT<M, Env, L, R>(Transducer<Env, SumTransducer<Unit, L, Unit,
         Morphism.Map(mx => mx.Map(f));
 
     public EitherT<M, Env, L, B> Bind<B>(Func<R, EitherT<M, Env, L, B>> f) =>
-        Morphism
-            .Map(mx => mx.Map(f))
-            .Flatten()
-            .Map(mx => mx.Morphism)
-            .Flatten();
+        Morphism.Map(mx => mx.Map(x => f(x).Morphism)).FlattenT();
 
     public EitherT<M, Env, L, C> SelectMany<B, C>(Func<R, EitherT<M, Env, L, B>> bind, Func<R, B, C> project) =>
         Bind(x => bind(x).Map(y => project(x, y)));
