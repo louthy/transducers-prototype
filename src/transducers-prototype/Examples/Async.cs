@@ -2,6 +2,18 @@
 
 namespace LanguageExt.Examples;
 
+public static class Async
+{
+    public static Async<Unit, A> lift<A>(this ValueTask<A> ma) =>
+        new (Transducer.Pure(ma));
+    
+    public static Async<Unit, A> lift<A>(Func<ValueTask<A>> ma) =>
+        new (Transducer.lift(ma));
+    
+    public static Async<Env, A> lift<Env, A>(Func<Env, ValueTask<A>> ma) =>
+        new (Transducer.lift(ma));
+}
+
 public record Async<Env, A>(Transducer<Env, ValueTask<A>> MorphismValue) : 
     KArr<Async<Env>, Env, A>
 {

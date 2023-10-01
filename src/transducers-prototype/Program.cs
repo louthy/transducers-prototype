@@ -2,10 +2,18 @@
 using LanguageExt.Examples;
 using static LanguageExt.Transducer;
 
-Func<string, int> foo = x => x.Length;
+var ax = Aff<Unit, int>.Right(100);
+var ay = Aff<Unit, int>.Right(200);
+var az =
+    from x in ax
+    from y in ay
+    select x + y;
 
-var task = foo.BeginInvoke("Hello", null, null);
-var res = foo.EndInvoke(task);
+//var ar = az.In
+
+//Func<string, int> foo = x => x.Length;
+//var task = foo.BeginInvoke("Hello", null, null);
+//var res = foo.EndInvoke(task);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Transducer bind tests

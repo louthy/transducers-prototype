@@ -1,4 +1,7 @@
 ﻿#nullable enable
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks.Sources;
 using LanguageExt.HKT;
 
 namespace LanguageExt;
@@ -50,6 +53,31 @@ public abstract record Transducer<A, B> : KArr<Any, A, B>
     public TResult<B> Invoke1(A value) =>
         Invoke(value, default, Invoke1Reducer<B>.Default)
             .Bind(static b => b is null ? TResult.None<B>() : TResult.Complete<B>(b));
+
+    /// <summary>
+    /// Invoke the transducer, reducing to a single value only
+    /// </summary>
+    /// <param name="value">Value to use as the argument to the transducer</param>
+    /// <returns>
+    /// If the transducer yields multiple values then it will return the last value in a `TResult.Complete`.
+    /// If the transducer yields zero values then it will return `TResult.None`. 
+    /// If the transducer throws an exception or yields an `Error`, then it will return `TResult.Fail`.
+    /// If the transducer is cancelled, then it will return `TResult.Cancelled`. 
+    /// </returns>
+    public ValueTask<TResult<B>> InvokeAsync1(A value)
+    {
+        // TODO: This will block the parent thread.  Need a nice solution.
+        var op = () => Invoke1(value);
+        var src = new TTask<B>(op);
+        
+        var task = new ValueTask<TResult<B>>(src, 0);
+
+        
+        var cookie = op.BeginInvoke(Done, task);
+        
+        return new ValueTask<TResult<B>>(op.EndInvoke(cookie));
+    }
+
     
     /// <summary>
     /// Invoke the transducer, transforming the input value and finally reducing the output  with
@@ -107,6 +135,5 @@ public abstract record Transducer<A, B> : KArr<Any, A, B>
         {
             st.Dispose();
         }
-    }    
-
+    }
 }

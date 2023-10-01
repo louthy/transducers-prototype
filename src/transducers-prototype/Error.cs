@@ -10,4 +10,5 @@ public readonly record struct Error(string Message)
 public static class Errors
 {
     public static readonly Error Cancelled = new ("Cancelled");
+    public static readonly Error None = new ("None");
 }
