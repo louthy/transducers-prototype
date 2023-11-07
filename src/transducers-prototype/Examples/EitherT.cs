@@ -13,32 +13,35 @@ public record EitherT<M, L, R>(Transducer<Unit, Transducer<Unit, Sum<L, R>>> Mor
     public Transducer<Unit, Transducer<Unit, Sum<L, R>>> Morphism => 
         MorphismValue;
 
-    public static EitherT<M, Unit, L, R> Right(R value) =>
+    public static EitherT<M, L, R> Right(R value) =>
         new (M.Pure(Transducer.Pure(Sum<L, R>.Right(value))).Morphism);
 
-    public static EitherT<M, Unit, L, R> Left(L value) =>
+    public static EitherT<M, L, R> Left(L value) =>
         new (M.Pure(Transducer.Pure(Sum<L, R>.Left(value))).Morphism);
     
-    public EitherT<M, Unit, L, B> MapRight<B>(Func<R, B> f) =>
+    public static EitherT<M, L, R> Lift(Transducer<Unit, Transducer<Unit, R>> ma) =>
+        new(ma.Morphism.Map(m => m.Map(r => Right(r).Morphism)).FlattenT());
+    
+    public EitherT<M, L, B> MapRight<B>(Func<R, B> f) =>
         new(Morphism.Map(mx => mx.MapRight(f)));
 
-    public EitherT<M, Unit, B, R> MapLeft<B>(Func<L, B> f) =>
+    public EitherT<M, B, R> MapLeft<B>(Func<L, B> f) =>
         new(Morphism.Map(mx => mx.MapLeft(f)));
 
-    public EitherT<M, Unit, A, B> BiMap<A, B>(Func<L, A> Left, Func<R, B> Right) =>
+    public EitherT<M, A, B> BiMap<A, B>(Func<L, A> Left, Func<R, B> Right) =>
         new(Morphism.Map(mx => mx.BiMap(Left, Right)));
 
-    public EitherT<M, Unit, L, B> Select<B>(Func<R, B> f) =>
+    public EitherT<M, L, B> Select<B>(Func<R, B> f) =>
         new(Morphism.Map(mx => mx.MapRight(f)));
 
-    public EitherT<M, Unit, L, B> Bind<B>(Func<R, EitherT<M, Unit, L, B>> f) =>
+    public EitherT<M, L, B> Bind<B>(Func<R, EitherT<M, Unit, L, B>> f) =>
         new(Morphism.Map(mx => mx.MapRight(x => f(x).Morphism)).FlattenT());
 
-    public EitherT<M, Unit, L, C> SelectMany<B, C>(Func<R, EitherT<M, Unit, L, B>> bind, Func<R, B, C> project) =>
+    public EitherT<M, L, C> SelectMany<B, C>(Func<R, EitherT<M, Unit, L, B>> bind, Func<R, B, C> project) =>
         Bind(x => bind(x).MapRight(y => project(x, y)));
 
-    public A Match<A>(Unit env, Func<L, A> Left, Func<R, A> Right, Func<A>? Bottom = null) =>
-        Morphism.Invoke(env, default, OuterReduce.Default) switch
+    public A Match<A>(Func<L, A> Left, Func<R, A> Right, Func<A>? Bottom = null) =>
+        Morphism.Invoke(default, default, OuterReduce.Default) switch
         {
             TComplete<Sum<L, R>> inner =>
                 inner switch
