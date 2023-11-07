@@ -14,12 +14,12 @@ public record ReaderT<M, Env>
         new (M.Pure(Transducer.lift<Env, Env>(env => env)).Morphism);
 }
 
-public record ReaderT<M, Env, A>(Transducer<Env, Transducer<Env, A>> MorphismValue) :
+public record ReaderT<M, Env, A>(Transducer<Env, Transducer<Env, A>> Transformer) :
     KArr<M, Env, Transducer<Env, A>>
     where M : Monad<M, Env>
 {
     public Transducer<Env, Transducer<Env, A>> Morphism =>
-        MorphismValue;
+        Transformer;
     
     public ReaderT<M, Env, B> Map<B>(Func<A, B> f) =>
         new(Morphism.Map(mx => mx.Map(f)));

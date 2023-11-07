@@ -1,5 +1,14 @@
 namespace LanguageExt.Examples;
 
+public static class AppTest
+{
+    public static Application<string, string> Run(string env) =>
+        from x in Application<string>.Success(100)
+        from y in Application<string>.Success(200)
+        from n in Application<string>.Ask
+        select $"Hello {n}, the answer is: {x + y}";
+}
+
 public static class Application<Env>
 {
     public static Application<Env, A> Success<A>(A value) =>
@@ -15,23 +24,23 @@ public static class Application<Env>
         Lift(ReaderT<MIO<Env>, Env>.Ask);
 }
 
-public record Application<Env, A>(EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A> Morphism) 
+public record Application<Env, A>(EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A> Transformer) 
 {
     public static Application<Env, A> Pure(A value) =>
         new (EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A>.Right(value));
 
     public Application<Env, B> Map<B>(Func<A, B> f) =>
-        new (Morphism.MapRight(f));
+        new (Transformer.MapRight(f));
 
     public Application<Env, B> Select<B>(Func<A, B> f) =>
-        new (Morphism.MapRight(f));
+        new (Transformer.MapRight(f));
 
     public Application<Env, B> Bind<B>(Func<A, Application<Env, B>> f) =>
-        new (Morphism.Bind(x => f(x).Morphism));
+        new (Transformer.Bind(x => f(x).Transformer));
 
     public Application<Env, C> SelectMany<B, C>(Func<A, Application<Env, B>> bind, Func<A, B, C> f) =>
         Bind(x => bind(x).Map(y => f(x, y)));
 
     public Application<Env, B> BiMap<B>(Func<Error, Error> Fail, Func<A, B> Succ, Func<B>? Bottom = null) =>
-        new(Morphism.BiMap(Fail, Succ));
+        new(Transformer.BiMap(Fail, Succ));
 }
