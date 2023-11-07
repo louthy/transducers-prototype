@@ -1,4 +1,4 @@
-﻿namespace LanguageExt;
+﻿/*namespace LanguageExt;
 
 record SumApplyTransducer<X, Y, A, B, C>(
         Transducer<Sum<X, A>, Sum<Y, Func<B, C>>> FF,
@@ -14,18 +14,6 @@ record SumApplyTransducer<X, Y, A, B, C>(
     public override Reducer<S, Sum<X, A>> Transform<S>(Reducer<S, Sum<Y, C>> reduce) =>
         new Reduce<S>(FF, FA, reduce);
 
-    /// <summary>
-    /// Lift the synchronous sum-transducer into the asynchronous space 
-    /// </summary>
-    public override TransducerAsync<Sum<X, A>, Sum<Y, C>> ToAsync() =>
-        ToSumAsync();
-
-    /// <summary>
-    /// Lift the synchronous sum-transducer into the asynchronous space 
-    /// </summary>
-    public override SumTransducerAsync<X, Y, A, C> ToSumAsync() =>
-        new SumApplyTransducerAsync<X, Y, A, B, C>(FF.ToAsync(), FA.ToAsync());
-    
     record Reduce<S>(
         Transducer<Sum<X, A>, Sum<Y, Func<B, C>>> FF,
         Transducer<Sum<X, A>, Sum<Y, B>> FA, 
@@ -34,9 +22,6 @@ record SumApplyTransducer<X, Y, A, B, C>(
     {
         public override TResult<S> Run(TState st, S s, Sum<X, A> v) =>
             FF.Transform(new ApFF<S>(v, FA, Reducer)).Run(st, s, v);
-
-        public override ReducerAsync<S, Sum<X, A>> ToAsync() =>
-            new SumApplyTransducerAsync<X, Y, A, B, C>.Reduce<S>(FF.ToAsync(), FA.ToAsync(), Reducer.ToAsync());
     }
     
     record ApFF<S>(
@@ -57,9 +42,6 @@ record SumApplyTransducer<X, Y, A, B, C>(
                 _ =>
                     TResult.Complete(s)
             };
-
-        public override ReducerAsync<S, Sum<Y, Func<B, C>>> ToAsync() =>
-            new SumApplyTransducerAsync<X, Y, A, B, C>.ApFF<S>(Value, FA.ToAsync(), Reducer.ToAsync());
     }
         
     record ApFA<S>(Func<B, C> FF, Reducer<S, Sum<Y, C>> Reducer) : Reducer<S, Sum<Y, B>>
@@ -71,8 +53,5 @@ record SumApplyTransducer<X, Y, A, B, C>(
                 SumLeft<Y, B> => TResult.Continue(s),
                 _ => TResult.Complete(s)
             };
-
-        public override ReducerAsync<S, Sum<Y, B>> ToAsync() =>
-            new SumApplyTransducerAsync<X, Y, A, B, C>.ApFA<S>(FF, Reducer.ToAsync());
     }
-}
+}*/

@@ -1,6 +1,4 @@
 ﻿#nullable enable
-using System;
-using LanguageExt.HKT;
 
 namespace LanguageExt;
 
@@ -34,17 +32,29 @@ public static partial class Transducer
     public static Transducer<A, B> constant<A, B>(B value) =>
         new ConstantTransducer<A, B>(value);
     
-    public static Transducer<Unit, A> lift<A>(Func<A> f) =>
-        new LiftTransducer4<A>(f);
-    
-    public static Transducer<A, B> lift<A, B>(Func<A, B> f) =>
-        new LiftTransducer3<A, B>(f);
-    
     public static Transducer<A, B> lift<A, B>(Func<A, TResult<B>> f) =>
         new LiftTransducer1<A, B>(f);
     
     public static Transducer<Unit, A> lift<A>(Func<TResult<A>> f) =>
         new LiftTransducer2<A>(f);
+    
+    public static Transducer<A, B> lift<A, B>(Func<A, B> f) =>
+        new LiftTransducer3<A, B>(f);
+    
+    public static Transducer<Unit, A> lift<A>(Func<A> f) =>
+        new LiftTransducer4<A>(f);
+    
+    public static Transducer<A, B> liftIO<A, B>(Func<CancellationToken, A, Task<B>> f) =>
+        new LiftIOTransducer3<A, B>(f);
+    
+    public static Transducer<A, B> liftIO<A, B>(Func<CancellationToken, A, Task<TResult<B>>> f) =>
+        new LiftIOTransducer1<A, B>(f);
+    
+    public static Transducer<Unit, A> liftIO<A>(Func<CancellationToken, Task<A>> f) =>
+        new LiftIOTransducer4<A>(f);
+    
+    public static Transducer<Unit, A> liftIO<A>(Func<CancellationToken, Task<TResult<A>>> f) =>
+        new LiftIOTransducer2<A>(f);
     
     /// <summary>
     /// Transducer composition.  The output of one transducer is fed as the input to the next.
@@ -126,13 +136,22 @@ public static partial class Transducer
     /// <returns>Flattened transducers</returns>
     public static Transducer<A, B> flatten<A, B>(Transducer<A, Transducer<Unit, B>> ff) =>
         new FlattenTransducer2<A, B>(ff);
-
+    
     /// <summary>
     /// Take nested transducers and flatten them
     /// </summary>
     /// <param name="ff">Nested transducers</param>
     /// <returns>Flattened transducers</returns>
-    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(Transducer<A, SumTransducer<X, Y, A, B>> ff) =>
+    public static Transducer<Env, Sum<Y, A>> flatten<Env, X, Y, A>(Transducer<Env, Sum<X, Transducer<Env, Sum<Y, A>>>> ff) =>
+        new FlattenSumTransducer2<Env, X, Y, A>(ff);
+
+    /*
+    /// <summary>
+    /// Take nested transducers and flatten them
+    /// </summary>
+    /// <param name="ff">Nested transducers</param>
+    /// <returns>Flattened transducers</returns>
+    public static Transducer<A, Sum<Y, B>> flatten<X, Y, A, B>(Transducer<A, Transducer<Sum<X, A>, Sum<Y, B>>> ff) =>
         new FlattenSumTransducer5<X, Y, A, B>(ff);
 
     /// <summary>
@@ -140,7 +159,7 @@ public static partial class Transducer
     /// </summary>
     /// <param name="ff">Nested transducers</param>
     /// <returns>Flattened transducers</returns>
-    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(Transducer<A, SumTransducer<X, Y, Unit, B>> ff) =>
+    public static Transducer<A, Sum<Y, B>> flatten<X, Y, A, B>(Transducer<A, Transducer<Sum<X, Unit>, Sum<Y, B>>> ff) =>
         new FlattenSumTransducer6<X, Y, A, B>(ff);
 
     /// <summary>
@@ -148,7 +167,7 @@ public static partial class Transducer
     /// </summary>
     /// <param name="ff">Nested transducers</param>
     /// <returns>Flattened transducers</returns>
-    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(SumTransducer<X, Y, A, Transducer<A, B>> ff) =>
+    public static Transducer<Sum<X, A>, Sum<Y, B>> flatten<X, Y, A, B>(Transducer<Sum<X, A>, Sum<Y, Transducer<A, B>>> ff) =>
         new FlattenSumTransducer7<X, Y, A, B>(ff);
 
     /// <summary>
@@ -156,8 +175,9 @@ public static partial class Transducer
     /// </summary>
     /// <param name="ff">Nested transducers</param>
     /// <returns>Flattened transducers</returns>
-    public static SumTransducer<X, Y, A, B> flatten<X, Y, A, B>(SumTransducer<X, Y, A, Transducer<Unit, B>> ff) =>
+    public static Transducer<Sum<X, A>, Sum<Y, B>> flatten<X, Y, A, B>(Transducer<Sum<X, A>, Sum<Y, Transducer<Unit, B>>> ff) =>
         new FlattenSumTransducer8<X, Y, A, B>(ff);
+        */
 
     /// <summary>
     /// Applicative apply
@@ -200,4 +220,75 @@ public static partial class Transducer
     /// </summary>
     public static Transducer<A, B> ignore<A, B>(Transducer<Unit, B> m) =>
         new IgnoreTransducer<A, B>(m);
+
+    /// <summary>
+    /// Functor bi-map
+    /// </summary>
+    /// <param name="First">First transducer to run</param>
+    /// <param name="Left">Left mapping transducer</param>
+    /// <param name="Right">Right mapping transducer</param>
+    /// <returns>Composition of first, left, and right transducers</returns>
+    public static Transducer<E, Sum<Y, B>> bimap<E, X, Y, A, B>(
+        Transducer<E, Sum<X, A>> First,
+        Transducer<X, Y> Left,
+        Transducer<A, B> Right) =>
+        new BiMap<E, X, Y, A, B>(First, Left, Right);
+
+    /// <summary>
+    /// Functor bi-map
+    /// </summary>
+    /// <param name="First">First transducer to run</param>
+    /// <param name="Left">Left mapping transducer</param>
+    /// <param name="Right">Right mapping transducer</param>
+    /// <returns>Composition of first, left, and right transducers</returns>
+    public static Transducer<Sum<X, A>, Sum<Z, C>> bimap<X, Y, Z, A, B, C>(
+        Transducer<Sum<X, A>, Sum<Y, B>> First,
+        Transducer<Y, Z> Left,
+        Transducer<B, C> Right) =>
+        new BiMap2<X, Y, Z, A, B, C>(First, Left, Right);
+
+    /// <summary>
+    /// Functor bi-map map left
+    /// </summary>
+    /// <param name="First">First transducer to run</param>
+    /// <param name="Left">Left mapping transducer</param>
+    /// <returns>Composition of first and left transducers</returns>
+    public static Transducer<E, Sum<Y, A>> mapLeft<E, X, Y, A>(
+        Transducer<E, Sum<X, A>> First,
+        Transducer<X, Y> Left) =>
+        new MapLeft<E, X, Y, A>(First, Left);
+
+    /// <summary>
+    /// Functor bi-map map left
+    /// </summary>
+    /// <param name="First">First transducer to run</param>
+    /// <param name="Left">Left mapping transducer</param>
+    /// <returns>Composition of first and left</returns>
+    public static Transducer<Sum<X, A>, Sum<Z, B>> mapLeft<X, Y, Z, A, B>(
+        Transducer<Sum<X, A>, Sum<Y, B>> First,
+        Transducer<Y, Z> Left) =>
+        new MapLeft2<X, Y, Z, A, B>(First, Left);
+
+    /// <summary>
+    /// Functor bi-map map right
+    /// </summary>
+    /// <param name="First">First transducer to run</param>
+    /// <param name="Right">Right mapping transducer</param>
+    /// <returns>Composition of first and right transducers</returns>
+    public static Transducer<E, Sum<X, B>> mapRight<E, X, A, B>(
+        Transducer<E, Sum<X, A>> First,
+        Transducer<A, B> Right) =>
+        new MapRight<E, X, A, B>(First, Right);
+
+    /// <summary>
+    /// Functor bi-map map right
+    /// </summary>
+    /// <param name="First">First transducer to run</param>
+    /// <param name="Right">Right mapping transducer</param>
+    /// <returns>Composition of first and right transducers</returns>
+    public static Transducer<Sum<X, A>, Sum<Y, C>> mapRight<X, Y, A, B, C>(
+        Transducer<Sum<X, A>, Sum<Y, B>> First,
+        Transducer<B, C> Right) =>
+        new MapRight2<X, Y, A, B, C>(First, Right);
+    
 }

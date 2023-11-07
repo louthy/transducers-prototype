@@ -1,4 +1,5 @@
-﻿using LanguageExt.HKT;
+﻿/*
+using LanguageExt.HKT;
 
 namespace LanguageExt.Examples;
 
@@ -17,5 +18,6 @@ public readonly struct StateT<M, Env, L> : MonadSum2<M, Env, L>
     where M : MonadSum2<M, Env, L>
 {
 }
+#2#
 #1#
 */

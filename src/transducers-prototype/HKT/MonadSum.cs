@@ -1,4 +1,5 @@
-﻿namespace LanguageExt.HKT;
+﻿/*
+namespace LanguageExt.HKT;
 
 /// <summary>
 /// Monad bind trait
@@ -86,3 +87,4 @@ public interface MonadSum<M, Env, X> : ApplicativeSum<M, Env, X>
         KArr<M, Env, X, Env, KArr<M, Env, X, Env, A>> mmx) =>
         M.Bind(mmx, Transducer.identity<KArr<M, Env, X, Env, A>>());
 }
+*/

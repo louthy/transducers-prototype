@@ -16,18 +16,20 @@ public static class TResult
         new TRecursive<S>(reduce);
 }
 
-public abstract record TResult<A>
+public abstract record TResultBase
 {
+    public virtual Error ErrorUnsafe => throw new InvalidOperationException("Can't call ErrorUnsafe on a TResult that succeeded");
     public abstract bool Success { get; }
     public abstract bool Continue { get; }
     public abstract bool Faulted { get; }
     public abstract bool Recursive { get; }
+}
+public abstract record TResult<A> : TResultBase
+{
     public virtual A ValueUnsafe => throw new InvalidOperationException("Can't call ValueUnsafe on a TResult that has no value");
-    public virtual Error ErrorUnsafe => throw new InvalidOperationException("Can't call ErrorUnsafe on a TResult that succeeded");
+    public abstract TResult<S> Reduce<S>(TState state, S stateValue, Reducer<S, A> reducer);
     public abstract TResult<B> Map<B>(Func<A, B> f);
     public abstract TResult<B> Bind<B>(Func<A, TResult<B>> f);
-    public abstract TResult<S> Reduce<S>(TState state, S stateValue, Reducer<S, A> reducer);
-    public abstract TResultAsync<A> ToAsync();
 }
 public sealed record TContinue<A>(A Value) : TResult<A>
 {
@@ -45,9 +47,6 @@ public sealed record TContinue<A>(A Value) : TResult<A>
 
     public override TResult<S> Reduce<S>(TState state, S stateValue, Reducer<S, A> reducer) =>
         TResult.Recursive(state, stateValue, Value, reducer);
-
-    public override TResultAsync<A> ToAsync() =>
-        TResultAsync.Continue(Value);
 
     public override string ToString() =>
         $"Continue({Value})";
@@ -68,9 +67,6 @@ public sealed record TComplete<A>(A Value) : TResult<A>
 
     public override TResult<S> Reduce<S>(TState state, S stateValue, Reducer<S, A> reducer) =>
         TResult.Complete(stateValue);
-
-    public override TResultAsync<A> ToAsync() =>
-        TResultAsync.Complete(Value);
 
     public override string ToString() =>
         $"Complete({Value})";
@@ -94,9 +90,6 @@ public sealed record TCancelled<A> : TResult<A>
     public override TResult<S> Reduce<S>(TState state, S stateValue, Reducer<S, A> reducer) =>
         TCancelled<S>.Default;
     
-    public override TResultAsync<A> ToAsync() =>
-        TResultAsync.Cancel<A>();
-    
     public override string ToString() =>
         "Cancelled";
 }
@@ -118,9 +111,6 @@ public sealed record TNone<A> : TResult<A>
     public override TResult<S> Reduce<S>(TState state, S stateValue, Reducer<S, A> reducer) =>
         TNone<S>.Default;
 
-    public override TResultAsync<A> ToAsync() =>
-        TResultAsync.None<A>();
-        
     public override string ToString() =>
         "None";
 }
@@ -141,9 +131,6 @@ public sealed record TFail<A>(Error Error) : TResult<A>
     public override TResult<S> Reduce<S>(TState state, S stateValue, Reducer<S, A> reducer) =>
         TResult.Fail<S>(Error);
 
-    public override TResultAsync<A> ToAsync() =>
-        TResultAsync.Fail<A>(Error);
-        
     public override string ToString() =>
         $"Fail({Error})";
 }
@@ -176,9 +163,6 @@ public sealed record TRecursive<A>(TRecursiveRunner<A> Runner) : TResult<A>
             _ => throw new NotSupportedException()
         };
 
-    public override TResultAsync<A> ToAsync() =>
-        TResultAsync.Recursive(Runner.ToAsync());
-        
     public override string ToString() =>
         "Recursive";
 }
@@ -192,8 +176,6 @@ public abstract record TRecursiveRunner<A>
     
     public TRecursiveRunner<B> Bind<B>(Func<A, TResult<B>> f) =>
         new TRecursiveBind<A, B>(this, f);
-
-    public abstract TRecursiveRunnerAsync<A> ToAsync();
 }
 
 public sealed record TRecursiveReduce<S, A>(TState State, S StateValue, A Value, Reducer<S, A> Next) 
@@ -201,9 +183,6 @@ public sealed record TRecursiveReduce<S, A>(TState State, S StateValue, A Value,
 {
     public override TResult<S> Run() =>
         Next.Run(State, StateValue, Value);
-
-    public override TRecursiveRunnerAsync<S> ToAsync() =>
-        new TRecursiveReduceAsync<S, A>(State, StateValue, Value, Next.ToAsync());
 }
 
 public sealed record TRecursiveMap<A, B>(TRecursiveRunner<A> Next, Func<A, B> F)
@@ -211,9 +190,6 @@ public sealed record TRecursiveMap<A, B>(TRecursiveRunner<A> Next, Func<A, B> F)
 {
     public override TResult<B> Run() =>
         Next.Run().Map(F);
-
-    public override TRecursiveRunnerAsync<B> ToAsync() =>
-        new TRecursiveMapAsync<A, B>(Next.ToAsync(), F);
 }
 
 public sealed record TRecursiveBind<A, B>(TRecursiveRunner<A> Next, Func<A, TResult<B>> F)
@@ -221,7 +197,4 @@ public sealed record TRecursiveBind<A, B>(TRecursiveRunner<A> Next, Func<A, TRes
 {
     public override TResult<B> Run() =>
         Next.Run().Bind(F);
-
-    public override TRecursiveRunnerAsync<B> ToAsync() =>
-        new TRecursiveBindAsync<A, B>(Next.ToAsync(), x => F(x).ToAsync());
 }

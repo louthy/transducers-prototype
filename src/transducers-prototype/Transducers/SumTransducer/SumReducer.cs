@@ -17,10 +17,4 @@ public record SumReducer<S, X, A>(Reducer<S, X> Left, Reducer<S, A> Right) : Red
             SumLeft<X, A> l => Left.Run(state, stateValue, l.Value),
             _ => TResult.Complete(stateValue)
         };
-
-    /// <summary>
-    /// Lift the synchronous reducer into the asynchronous space 
-    /// </summary>
-    public override ReducerAsync<S, Sum<X, A>> ToAsync() =>
-        new SumReducerAsync<S, X, A>(Left.ToAsync(), Right.ToAsync());
 }

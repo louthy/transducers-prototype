@@ -1,4 +1,6 @@
-﻿namespace LanguageExt;
+﻿/*
+#nullable enable
+namespace LanguageExt;
 
 record StateTransducer<State, A>(Transducer<State, (State State, A Value)> MorphismValue) :
     Transducer<State, A>
@@ -6,24 +8,13 @@ record StateTransducer<State, A>(Transducer<State, (State State, A Value)> Morph
     public override Reducer<S, State> Transform<S>(Reducer<S, A> reduce) =>
         MorphismValue.Transform(new Reducer1<S>(reduce));
 
-    public override TransducerAsync<State, A> ToAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     record Reducer1<S>(Reducer<S, A> Reducer) : Reducer<S, (State State, A Value)>
     {
         //                                             THIS IS A PROBLEM
         public override TResult<S> Run(TState st, S s, (State State, A Value) value) =>
             Reducer.Run(st, s, value.Value);
-
-        public override ReducerAsync<S, (State State, A Value)> ToAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
-
 
 record StateSumTransducer<Env, A>(SumTransducer<Env, ValueTask<Error>, Env, ValueTask<A>> MorphismValue) :
     SumTransducer<Env, Error, Env, A>
@@ -68,20 +59,6 @@ record StateSumTransducer<Env, A>(SumTransducer<Env, ValueTask<Error>, Env, Valu
                 }
             }
         }
-
-        public override ReducerAsync<S, Sum<ValueTask<Error>, ValueTask<A>>> ToAsync()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public override TransducerAsync<Sum<Env, Env>, Sum<Error, A>> ToAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override SumTransducerAsync<Env, Error, Env, A> ToSumAsync()
-    {
-        throw new NotImplementedException();
     }
 }
+*/

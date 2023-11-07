@@ -1,4 +1,5 @@
-﻿using LanguageExt.HKT;
+﻿/*
+using LanguageExt.HKT;
 
 namespace LanguageExt;
 
@@ -6,15 +7,6 @@ public abstract record SumTransducer<X, Y, A, B> :
     Transducer<Sum<X, A>, Sum<Y, B>>, 
     KArr<Any, X, Y, A, B> 
 {
-    /// <summary>
-    /// Lifts this `SumTransducer` into a `SumTransducerAsync` space.     
-    /// </summary>
-    /// <remarks>
-    /// This allows synchronous transducers to be used alongside asynchronous transducers  
-    /// </remarks>
-    /// <returns>Asynchronous transducer version of this transducer </returns>
-    public abstract SumTransducerAsync<X, Y, A, B> ToSumAsync();
-
     /// <summary>
     /// Self access
     /// </summary>
@@ -49,22 +41,6 @@ record LiftSumTransducer<X, Y, A, B>(Transducer<X, Sum<Y, B>> Left, Transducer<A
     public override Reducer<S, Sum<X, A>> Transform<S>(Reducer<S, Sum<Y, B>> reduce) =>
         new Reduce<S>(Left, Right, reduce);
     
-    /// <summary>
-    /// Lift the synchronous sum-transducer into the asynchronous space 
-    /// </summary>
-    public override TransducerAsync<Sum<X, A>, Sum<Y, B>> ToAsync() =>
-        new LiftSumTransducerAsync<X, Y, A, B>(Left.ToAsync(), Right.ToAsync());
-    
-    /// <summary>
-    /// Lifts this `SumTransducer` into a `SumTransducerAsync` space.     
-    /// </summary>
-    /// <remarks>
-    /// This allows synchronous transducers to be used alongside asynchronous transducers  
-    /// </remarks>
-    /// <returns>Asynchronous transducer version of this transducer </returns>
-    public override SumTransducerAsync<X, Y, A, B> ToSumAsync() =>
-        new LiftSumTransducerAsync<X, Y, A, B>(Left.ToAsync(), Right.ToAsync());
-        
     record Reduce<S>(Transducer<X, Sum<Y, B>> Left, Transducer<A, Sum<Y, B>> Right, Reducer<S, Sum<Y, B>> Reducer) : 
         Reducer<S,Sum<X, A>>
     {
@@ -75,9 +51,6 @@ record LiftSumTransducer<X, Y, A, B>(Transducer<X, Sum<Y, B>> Left, Transducer<A
                 SumLeft<X, A> l => Left.Transform(Reducer).Run(st, s, l.Value),
                 _ => TResult.Complete(s)
             };
-
-        public override ReducerAsync<S, Sum<X, A>> ToAsync() =>
-            new LiftSumTransducerAsync<X, Y, A, B>.Reduce<S>(Left.ToAsync(), Right.ToAsync(), Reducer.ToAsync());
     }
 }
 
@@ -103,20 +76,5 @@ record LiftSumTransducer2<X, Y, A, B>(Transducer<Sum<X, A>, Sum<Y, B>> Transduce
     /// <returns>Reducer that captures the transformation of the `Transducer` and the provided reducer</returns>
     public override Reducer<S, Sum<X, A>> Transform<S>(Reducer<S, Sum<Y, B>> reduce) =>
         Transducer.Transform(reduce);
-    
-    /// <summary>
-    /// Lift the synchronous sum-transducer into the asynchronous space 
-    /// </summary>
-    public override TransducerAsync<Sum<X, A>, Sum<Y, B>> ToAsync() =>
-        new LiftSumTransducerAsync2<X, Y, A, B>(Transducer.ToAsync());
-        
-    /// <summary>
-    /// Lifts this `SumTransducer` into a `SumTransducerAsync` space.     
-    /// </summary>
-    /// <remarks>
-    /// This allows synchronous transducers to be used alongside asynchronous transducers  
-    /// </remarks>
-    /// <returns>Asynchronous transducer version of this transducer </returns>
-    public override SumTransducerAsync<X, Y, A, B> ToSumAsync() =>
-        new LiftSumTransducerAsync2<X, Y, A, B>(Transducer.ToAsync());
 }
+*/

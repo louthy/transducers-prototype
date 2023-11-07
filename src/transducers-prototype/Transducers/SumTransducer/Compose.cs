@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿/*
+#nullable enable
 namespace LanguageExt;
 
 record ComposeSumTransducer<TT, TU, TV, TA, TB, TC>(
@@ -9,12 +10,6 @@ record ComposeSumTransducer<TT, TU, TV, TA, TB, TC>(
     public override Reducer<S, Sum<TT, TA>> Transform<S>(Reducer<S, Sum<TV, TC>> reduce) =>
         F.Transform(
             G.Transform(reduce));
-
-    public override SumTransducerAsync<TT, TV, TA, TC> ToAsync() =>
-        ToSumAsync();
-
-    public override SumTransducerAsync<TT, TV, TA, TC> ToSumAsync() =>
-        new ComposeSumTransducerAsync<TT, TU, TV, TA, TB, TC>(F.ToSumAsync(), G.ToSumAsync());
 }
 
 record ComposeSumTransducer<TT, TU, TV, TW, TA, TB, TC, TD>(
@@ -27,12 +22,6 @@ record ComposeSumTransducer<TT, TU, TV, TW, TA, TB, TC, TD>(
         F.Transform(
             G.Transform(
                 H.Transform(reduce)));
-
-    public override SumTransducerAsync<TT, TW, TA, TD> ToAsync() =>
-        ToSumAsync();
-
-    public override SumTransducerAsync<TT, TW, TA, TD> ToSumAsync() =>
-        new ComposeSumTransducerAsync<TT, TU, TV, TW, TA, TB, TC, TD>(F.ToSumAsync(), G.ToSumAsync(), H.ToSumAsync());
 }
 
 record ComposeSumTransducer<TT, TU, TV, TW, TX, TA, TB, TC, TD, TE>(
@@ -47,13 +36,6 @@ record ComposeSumTransducer<TT, TU, TV, TW, TX, TA, TB, TC, TD, TE>(
             G.Transform(
                 H.Transform(
                     I.Transform(reduce))));
-
-    public override SumTransducerAsync<TT, TX, TA, TE> ToAsync() =>
-        ToSumAsync();
-
-    public override SumTransducerAsync<TT, TX, TA, TE> ToSumAsync() =>
-        new ComposeSumTransducerAsync<TT, TU, TV, TW, TX, TA, TB, TC, TD, TE>(
-            F.ToSumAsync(), G.ToSumAsync(), H.ToSumAsync(), I.ToSumAsync());
 }
 
 record ComposeSumTransducer<TT, TU, TV, TW, TX, TY, TA, TB, TC, TD, TE, TF>(
@@ -70,13 +52,6 @@ record ComposeSumTransducer<TT, TU, TV, TW, TX, TY, TA, TB, TC, TD, TE, TF>(
                 H.Transform(
                     I.Transform(
                         J.Transform(reduce)))));
-
-    public override SumTransducerAsync<TT, TY, TA, TF> ToAsync() =>
-        ToSumAsync();
-
-    public override SumTransducerAsync<TT, TY, TA, TF> ToSumAsync() =>
-        new ComposeSumTransducerAsync<TT, TU, TV, TW, TX, TY, TA, TB, TC, TD, TE, TF>(
-            F.ToSumAsync(), G.ToSumAsync(), H.ToSumAsync(), I.ToSumAsync(), J.ToSumAsync());
 }
 
 record ComposeSumTransducer<TT, TU, TV, TW, TX, TY, TZ, TA, TB, TC, TD, TE, TF, TG>(
@@ -95,11 +70,5 @@ record ComposeSumTransducer<TT, TU, TV, TW, TX, TY, TZ, TA, TB, TC, TD, TE, TF, 
                     I.Transform(
                         J.Transform(
                             K.Transform(reduce))))));
-
-    public override SumTransducerAsync<TT, TZ, TA, TG> ToAsync() =>
-        ToSumAsync();
-
-    public override SumTransducerAsync<TT, TZ, TA, TG> ToSumAsync() =>
-        new ComposeSumTransducerAsync<TT, TU, TV, TW, TX, TY, TZ, TA, TB, TC, TD, TE, TF, TG>(
-            F.ToSumAsync(), G.ToSumAsync(), H.ToSumAsync(), I.ToSumAsync(), J.ToSumAsync(), K.ToSumAsync());
 }
+*/

@@ -2,6 +2,10 @@
 using LanguageExt.Examples;
 using static LanguageExt.Transducer;
 
+AsyncTest.Main();
+return;
+
+/*
 var ax = Aff<Unit, int>.Right(100);
 var ay = Aff<Unit, int>.Right(200);
 var az =
@@ -83,3 +87,4 @@ static Transducer<Unit, Unit> writeLine(string x) =>
         Console.WriteLine(x);
         return default(Unit);
     });
+*/

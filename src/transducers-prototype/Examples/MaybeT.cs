@@ -1,4 +1,4 @@
-﻿using LanguageExt.HKT;
+﻿/*using LanguageExt.HKT;
 
 namespace LanguageExt.Examples;
 
@@ -13,7 +13,7 @@ public abstract record Maybe<A> : Maybe
     public static readonly Maybe<A> Nothing = new NothingCase<A>();
 }
 public record JustCase<A>(A Value): Maybe<A>;
-public record NothingCase<A> : Maybe<A>;*/
+public record NothingCase<A> : Maybe<A>;#1#
 
 /// <summary>
 /// Maybe transformer
@@ -46,16 +46,16 @@ public readonly record struct MaybeT<M, Env, X, A>(SumTransducer<Env, X, Env, Su
         new (SumTransducer.lift(m));
     
     public MaybeT<M, Env, X, B> Map<B>(Func<A, B> f) =>
-        Morphism.Map(mx => mx.Map(f));
+        Morphism.MapRight(mx => Transducer.MapRight(mx, f));
 
     public MaybeT<M, Env, X, B> Select<B>(Func<A, B> f) =>
-        Morphism.Map(mx => mx.Map(f));
+        Morphism.MapRight(mx => Transducer.MapRight(mx, f));
 
     public MaybeT<M, Env, X, B> Bind<B>(Func<A, MaybeT<M, Env, X, B>> f) =>
         Morphism
-            .Map(mx => mx.Map(f))
+            .MapRight(mx => Transducer.MapRight(mx, f))
             .Flatten()
-            .Map(mx => mx.Morphism)
+            .MapRight(mx => mx.Morphism)
             .Flatten();
 }
 
@@ -76,4 +76,4 @@ public readonly struct MaybeT<M, Env, X> : MonadSum<M, Env, X>
     {
         throw new NotImplementedException();
     }
-}
+}*/

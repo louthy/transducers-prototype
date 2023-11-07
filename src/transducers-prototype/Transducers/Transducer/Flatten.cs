@@ -1,56 +1,110 @@
 ﻿#nullable enable
+using System.Diagnostics;
+using LanguageExt.HKT;
+
 namespace LanguageExt;
 
 record FlattenTransducer1<A, B>(Transducer<A, Transducer<A, B>> FF) : Transducer<A, B>
 {
-    public override Reducer<S, A> Transform<S>(Reducer<S, B> reduce) =>
+    public Reducer<S, A> Transform<S>(Reducer<S, B> reduce) =>
         new Reduce<S>(FF, reduce);
-
-    public override TransducerAsync<A, B> ToAsync() =>
-        new FlattenTransducerAsyncSync1<A, B>(FF.ToAsync());
     
     record Reduce<S>(Transducer<A, Transducer<A, B>> FF, Reducer<S, B> Reducer) : Reducer<S, A>
     {
         public override TResult<S> Run(TState st, S s, A x) =>
             FF.Transform(new Reduce1<S>(x, Reducer)).Run(st, s, x);
-
-        public override ReducerAsync<S, A> ToAsync() =>
-            new FlattenTransducerAsyncSync1<A, B>.Reduce<S>(FF.ToAsync(), Reducer.ToAsync());
     }    
     
     record Reduce1<S>(A Value, Reducer<S, B> Reducer) : Reducer<S, Transducer<A, B>>
     {
         public override TResult<S> Run(TState st, S s, Transducer<A, B> f) =>
             f.Transform(Reducer).Run(st, s, Value);
+    }
 
-        public override ReducerAsync<S, Transducer<A, B>> ToAsync() =>
-            new FlattenTransducerAsyncSync1<A, B>.Reduce1<S>(Value, Reducer.ToAsync());
-    }    
+    public Transducer<A, B> Morphism =>
+        this;
 }
 
 record FlattenTransducer2<A, B>(Transducer<A, Transducer<Unit, B>> FF) : Transducer<A, B>
 {
-    public override Reducer<S, A> Transform<S>(Reducer<S, B> reduce) =>
+    public Reducer<S, A> Transform<S>(Reducer<S, B> reduce) =>
         new Reduce<S>(FF, reduce);
-
-    public override TransducerAsync<A, B> ToAsync() =>
-        new FlattenTransducerAsyncSync2<A, B>(FF.ToAsync());
     
     record Reduce<S>(Transducer<A, Transducer<Unit, B>> FF, Reducer<S, B> Reducer) : Reducer<S, A>
     {
         public override TResult<S> Run(TState st, S s, A x) =>
             FF.Transform(new Reduce1<S>(Reducer)).Run(st, s, x);
-
-        public override ReducerAsync<S, A> ToAsync() =>
-            new FlattenTransducerAsyncSync2<A, B>.Reduce<S>(FF.ToAsync(), Reducer.ToAsync());
     }    
     
     record Reduce1<S>(Reducer<S, B> Reducer) : Reducer<S, Transducer<Unit, B>>
     {
         public override TResult<S> Run(TState st, S s, Transducer<Unit, B> f) =>
             f.Transform(Reducer).Run(st, s, default);
+    }    
 
-        public override ReducerAsync<S, Transducer<Unit, B>> ToAsync() =>
-            new FlattenTransducerAsyncSync2<A, B>.Reduce1<S>(Reducer.ToAsync());
+    public Transducer<A, B> Morphism =>
+        this;
+}
+
+record FlattenSumTransducer1<Env, X, A>(Transducer<Env, Sum<X, Transducer<Env, Sum<X, A>>>> FF) 
+    : Transducer<Env, Sum<X, A>>
+{
+    public Transducer<Env, Sum<X, A>> Morphism => 
+        this;
+
+    public Reducer<S, Env> Transform<S>(Reducer<S, Sum<X, A>> reduce) =>
+        new Reduce0<S>(FF, reduce);
+
+    record Reduce0<S>(Transducer<Env, Sum<X, Transducer<Env, Sum<X, A>>>> FF, Reducer<S, Sum<X, A>> Reducer) 
+        : Reducer<S, Env>
+    {
+        public override TResult<S> Run(TState state, S stateValue, Env value) =>
+            FF.Transform(new Reduce<S>(value, Reducer)).Run(state, stateValue, value);
+    }
+
+    record Reduce<S>(Env Env, Reducer<S, Sum<X, A>> Reducer) : Reducer<S, Sum<X, Transducer<Env, Sum<X, A>>>>
+    {
+        public override TResult<S> Run(TState state, S stateValue, Sum<X, Transducer<Env, Sum<X, A>>> value) =>
+            value switch
+            {
+                SumRight<X, Transducer<Env, Sum<X, A>>> r =>
+                    r.Value.Transform(Reducer).Run(state, stateValue, Env),
+
+                SumLeft<X, Transducer<Env, Sum<X, A>>> =>
+                    TResult.Complete(stateValue),
+                
+                _ => throw new UnreachableException()
+            };
+    }    
+}
+record FlattenSumTransducer2<Env, X, Y, A>(Transducer<Env, Sum<X, Transducer<Env, Sum<Y, A>>>> FF) 
+    : Transducer<Env, Sum<Y, A>>
+{
+    public Transducer<Env, Sum<Y, A>> Morphism => 
+        this;
+
+    public Reducer<S, Env> Transform<S>(Reducer<S, Sum<Y, A>> reduce) =>
+        new Reduce0<S>(FF, reduce);
+
+    record Reduce0<S>(Transducer<Env, Sum<X, Transducer<Env, Sum<Y, A>>>> FF, Reducer<S, Sum<Y, A>> Reducer) 
+        : Reducer<S, Env>
+    {
+        public override TResult<S> Run(TState state, S stateValue, Env value) =>
+            FF.Transform(new Reduce<S>(value, Reducer)).Run(state, stateValue, value);
+    }
+
+    record Reduce<S>(Env Env, Reducer<S, Sum<Y, A>> Reducer) : Reducer<S, Sum<X, Transducer<Env, Sum<Y, A>>>>
+    {
+        public override TResult<S> Run(TState state, S stateValue, Sum<X, Transducer<Env, Sum<Y, A>>> value) =>
+            value switch
+            {
+                SumRight<X, Transducer<Env, Sum<Y, A>>> r =>
+                    r.Value.Transform(Reducer).Run(state, stateValue, Env),
+
+                SumLeft<X, Transducer<Env, Sum<Y, A>>> =>
+                    TResult.Complete(stateValue),
+                
+                _ => throw new UnreachableException()
+            };
     }    
 }

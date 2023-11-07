@@ -6,12 +6,12 @@ record ComposeTransducer<TA, TB, TC>(
     Transducer<TB, TC> G) : 
     Transducer<TA, TC>
 {
-    public override Reducer<S, TA> Transform<S>(Reducer<S, TC> reduce) =>
+    public Reducer<S, TA> Transform<S>(Reducer<S, TC> reduce) =>
         F.Transform(
             G.Transform(reduce));
 
-    public override TransducerAsync<TA, TC> ToAsync() =>
-        new ComposeTransducerAsync<TA, TB, TC>(F.ToAsync(), G.ToAsync());
+    public Transducer<TA, TC> Morphism =>
+        this;
 }
 
 record ComposeTransducer<TA, TB, TC, TD>(
@@ -20,13 +20,13 @@ record ComposeTransducer<TA, TB, TC, TD>(
     Transducer<TC, TD> H) : 
     Transducer<TA, TD>
 {
-    public override Reducer<S, TA> Transform<S>(Reducer<S, TD> reduce) =>
+    public Reducer<S, TA> Transform<S>(Reducer<S, TD> reduce) =>
         F.Transform(
             G.Transform(
                 H.Transform(reduce)));
 
-    public override TransducerAsync<TA, TD> ToAsync() =>
-        new ComposeTransducerAsync<TA, TB, TC, TD>(F.ToAsync(), G.ToAsync(), H.ToAsync());
+    public Transducer<TA, TD> Morphism =>
+        this;
 }
 
 record ComposeTransducer<TA, TB, TC, TD, TE>(
@@ -36,14 +36,14 @@ record ComposeTransducer<TA, TB, TC, TD, TE>(
     Transducer<TD, TE> I) : 
     Transducer<TA, TE>
 {
-    public override Reducer<S, TA> Transform<S>(Reducer<S, TE> reduce) =>
+    public Reducer<S, TA> Transform<S>(Reducer<S, TE> reduce) =>
         F.Transform(
             G.Transform(
                 H.Transform(
                     I.Transform(reduce))));
 
-    public override TransducerAsync<TA, TE> ToAsync() =>
-        new ComposeTransducerAsync<TA, TB, TC, TD, TE>(F.ToAsync(), G.ToAsync(), H.ToAsync(), I.ToAsync());
+    public Transducer<TA, TE> Morphism =>
+        this;
 }
 
 record ComposeTransducer<TA, TB, TC, TD, TE, TF>(
@@ -54,16 +54,15 @@ record ComposeTransducer<TA, TB, TC, TD, TE, TF>(
     Transducer<TE, TF> J) : 
     Transducer<TA, TF>
 {
-    public override Reducer<S, TA> Transform<S>(Reducer<S, TF> reduce) =>
+    public Reducer<S, TA> Transform<S>(Reducer<S, TF> reduce) =>
         F.Transform(
             G.Transform(
                 H.Transform(
                     I.Transform(
                         J.Transform(reduce)))));
 
-    public override TransducerAsync<TA, TF> ToAsync() =>
-        new ComposeTransducerAsync<TA, TB, TC, TD, TE, TF>(
-            F.ToAsync(), G.ToAsync(), H.ToAsync(), I.ToAsync(), J.ToAsync());
+    public Transducer<TA, TF> Morphism =>
+        this;
 }
 
 record ComposeTransducer<TA, TB, TC, TD, TE, TF, TG>(
@@ -75,7 +74,7 @@ record ComposeTransducer<TA, TB, TC, TD, TE, TF, TG>(
     Transducer<TF, TG> K) : 
     Transducer<TA, TG>
 {
-    public override Reducer<S, TA> Transform<S>(Reducer<S, TG> reduce) =>
+    public Reducer<S, TA> Transform<S>(Reducer<S, TG> reduce) =>
         F.Transform(
             G.Transform(
                 H.Transform(
@@ -83,7 +82,6 @@ record ComposeTransducer<TA, TB, TC, TD, TE, TF, TG>(
                         J.Transform(
                             K.Transform(reduce))))));
 
-    public override TransducerAsync<TA, TG> ToAsync() =>
-        new ComposeTransducerAsync<TA, TB, TC, TD, TE, TF, TG>(
-            F.ToAsync(), G.ToAsync(), H.ToAsync(), I.ToAsync(), J.ToAsync(), K.ToAsync());
+    public Transducer<TA, TG> Morphism =>
+        this;
 }

@@ -13,9 +13,4 @@ public abstract record Reducer<S, A>
     /// Run the reduce operation with an initial state and value
     /// </summary>
     public abstract TResult<S> Run(TState state, S stateValue, A value);
-    
-    /// <summary>
-    /// Lift the synchronous reducer into the asynchronous space 
-    /// </summary>
-    public abstract ReducerAsync<S, A> ToAsync();
 }

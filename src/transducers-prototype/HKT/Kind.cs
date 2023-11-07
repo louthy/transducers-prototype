@@ -46,12 +46,7 @@ public interface KArr<F, A, B>
 /// <typeparam name="B">Right destination-type</typeparam>
 public interface KArr<F, X, Y, A, B> : KArr<F, Sum<X, A>, Sum<Y, B>>
 {
-    /// <summary>
-    /// Transducer from `A` to `B`
-    /// </summary>
-    new SumTransducer<X, Y, A, B> Morphism { get; }
 }
-
 
 
 /// <summary>
@@ -70,13 +65,8 @@ public interface KArr<F, X, Y, A, B> : KArr<F, Sum<X, A>, Sum<Y, B>>
 /// </remarks>
 /// <typeparam name="F">Higher kind</typeparam>
 /// <typeparam name="A">Lower kind input type</typeparam>
-/// <typeparam name="B">Lower kind output type</typeparam>
-public interface KStar<F, A>
+public interface KStar<F, A> : KArr<F, Unit, A>
 {
-    /// <summary>
-    /// Transducer from `Unit` to `A`
-    /// </summary>
-    Transducer<Unit, A> Morphism { get; }
 }
 
 /// <summary>
@@ -95,13 +85,7 @@ public interface KStar<F, A>
 /// </remarks>
 /// <typeparam name="F">Higher kind</typeparam>
 /// <typeparam name="X">Left source-type</typeparam>
-/// <typeparam name="Y">Left destination-type</typeparam>
 /// <typeparam name="A">Right destination-type</typeparam>
-/// <typeparam name="B">Right destination-type</typeparam>
 public interface KStar<F, X, A> : KStar<F, Sum<X, A>>
 {
-    /// <summary>
-    /// Transducer from `A` to `B`
-    /// </summary>
-    new SumTransducer<Unit, X, Unit, A> Morphism { get; }
 }

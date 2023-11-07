@@ -1,4 +1,4 @@
-﻿using LanguageExt.HKT;
+﻿/*using LanguageExt.HKT;
 
 namespace LanguageExt;
 
@@ -7,10 +7,28 @@ public static partial class Transducer
     /// <summary>
     /// Maps every value passing through this transducer
     /// </summary>
-    public static SumTransducer<X, Y, A, C> Map<X, Y, A, B, C>(
+    public static SumTransducer<X, Y, A, C> MapRight<X, Y, A, B, C>(
         this SumTransducer<X, Y, A, B> m, 
         Func<B, C> f) =>
         SumTransducer.compose(m, SumTransducer.mapRight<Y, B, C>(lift(f)));
+    
+    /// <summary>
+    /// Maps every value passing through this transducer
+    /// </summary>
+    public static SumTransducer<X, Z, A, B> MapLeft<X, Y, Z, A, B>(
+        this SumTransducer<X, Y, A, B> m, 
+        Func<Y, Z> f) =>
+        SumTransducer.compose(m, SumTransducer.mapLeft<Y, Z, B>(lift(f)));
+    
+    /// <summary>
+    /// Maps every value passing through this transducer
+    /// </summary>
+    public static SumTransducer<X, Z, A, C> BiMap<X, Y, Z, A, B, C>(
+        this SumTransducer<X, Y, A, B> m, 
+        Func<Y, Z> Left,
+        Func<B, C> Right) =>
+        SumTransducer.compose(m, SumTransducer.bimap(lift(Left), lift(Right)));
+
 
     /// <summary>
     /// Maps every value passing through this transducer
@@ -82,7 +100,7 @@ public static partial class Transducer
         this SumTransducer<X, Y, A, B> m, 
         Func<B, SumTransducer<X, Y, A, C>> g,
         Func<B, C, D> project) =>
-        m.Bind(x => g(x).Map(y => project(x, y)));    
+        m.Bind(x => g(x).MapRight(y => project(x, y)));    
 
     /// <summary>
     /// Projects every value into the monadic bind function provided. 
@@ -102,7 +120,7 @@ public static partial class Transducer
         this Transducer<A, B> m, 
         Func<B, SumTransducer<X, Y, A, C>> g,
         Func<B, C, D> project) =>
-        m.Bind(x => g(x).Map(y => project(x, y)));    
+        m.Bind(x => g(x).MapRight(y => project(x, y)));    
     
     /// <summary>
     /// Applicative apply
@@ -148,4 +166,4 @@ public static partial class Transducer
     public static SumTransducer<Env, X, Env, B> Flatten<Env, X, B>(this SumTransducer<Env, X, Env, SumTransducer<Unit, X, Unit, B>> ff) =>
         new FlattenSumTransducer4<Env, X, Env, B>(ff);
 
-}
+}*/

@@ -1,4 +1,5 @@
-﻿namespace LanguageExt.HKT;
+﻿/*
+namespace LanguageExt.HKT;
 
 /// <summary>
 /// Applicative pure trait
@@ -142,3 +143,4 @@ public interface ApplicativeSum<F, Env, X> : FunctorSum<F, Env, X>
     public static virtual KArr<F, Env, X, Env, B> Raise<B>(X value) =>
         F.Lift(SumTransducer.constant<Env, X, Env, B>(Sum<X, B>.Left(value)));
 }
+*/

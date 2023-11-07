@@ -3,6 +3,12 @@ using System;
 
 namespace LanguageExt;
 
+public static class Sum
+{
+    public static readonly Sum<Unit, Unit> RightUnit = new SumRight<Unit, Unit>(default);
+    public static readonly Sum<Unit, Unit> LeftUnit = new SumLeft<Unit, Unit>(default);
+}
+
 /// <summary>
 /// Sum-type.  Represents either a value of type `A` or a value of type `X`.
 /// </summary>

@@ -1,41 +1,33 @@
-﻿using LanguageExt.HKT;
+﻿/*
+using LanguageExt.HKT;
 
 namespace LanguageExt.Examples;
 
-public readonly record struct Option<A>(SumTransducer<Unit, Unit, Unit, A> MorphismUnsafe) 
-    : KArr<Option, Unit, Unit, Unit, A>
+public readonly record struct Option<A>(Transducer<Unit, Sum<Unit, A>> MorphismUnsafe) 
+    : KArr<Option, Unit, Sum<Unit, A>>
 {
-    Transducer<Sum<Unit, Unit>, Sum<Unit, A>> KArr<Option, Sum<Unit, Unit>, Sum<Unit, A>>.Morphism =>
+    public Transducer<Unit, Sum<Unit, A>> Morphism => 
         MorphismUnsafe;
-
-    public SumTransducer<Unit, Unit, Unit, A> Morphism => 
-        MorphismUnsafe;
-
+    
     public static Option<A> Some(A value) =>
-        SumTransducer.Right<Unit, A>(value);
+        new(Transducer.Pure(Sum<Unit, A>.Right(value)));
     
     public static readonly Option<A> None =
-        SumTransducer.Left<Unit, A>(default);
-
+        new(Transducer.Pure(Sum<Unit, A>.Left(default)));
+    
     public static Option<A> Optional(A? value) =>
         value is null 
             ? None 
             : Some(value);
     
-    public static implicit operator Option<A>(SumTransducer<Unit, Unit, Unit, A> m) =>
-        new (m);
-    
-    public static implicit operator Option<A>(Transducer<Sum<Unit, Unit>, Sum<Unit, A>> m) =>
-        new (SumTransducer.lift(m));
-
     public Option<B> Map<B>(Func<A, B> f) =>
-        Morphism.Map(f);
+        new(Morphism.MapRight(f));
 
     public Option<B> Select<B>(Func<A, B> f) =>
-        Morphism.Map(f);
+        new(Morphism.MapRight(f));
 
     public Option<B> Bind<B>(Func<A, Option<B>> f) =>
-        Morphism.Bind(x => f(x).Morphism);
+        new (Map(x => f(x).Morphism).Morphism.Flatten());
 
     public Option<C> SelectMany<B, C>(Func<A, Option<B>> b, Func<A, B, C> p) =>
         Bind(x => b(x).Map(y => p(x, y)));
@@ -48,8 +40,10 @@ public readonly record struct Option<A>(SumTransducer<Unit, Unit, Unit, A> Morph
             TCancelled<Sum<Unit, A>>                             => throw new OperationCanceledException(), 
             _                                                    => None()
         };
+
 }
 
+/*
 public readonly struct Option : 
     MonadSum<Option, Unit, Unit>, 
     ApplySum<Option, Unit, Unit>
@@ -90,3 +84,5 @@ public static class Test
     public static Option<int> Test1() =>
         Add(Option<int>.Some(123), Option<int>.Some(123)).Morphism;
 }
+#1#
+*/

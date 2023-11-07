@@ -1,4 +1,4 @@
-﻿namespace LanguageExt;
+﻿/*namespace LanguageExt;
 
 public static class SumTransducer
 {
@@ -262,4 +262,4 @@ public static class SumTransducer
     /// </summary>
     public static SumTransducer<X, Y, A, B> ignore<X, Y, A, B>(SumTransducer<Unit, Y, Unit, B> m) =>
         new IgnoreSumTransducer<X, Y, A, B>(m);
-}
+}*/
