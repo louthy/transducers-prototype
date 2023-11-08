@@ -2,9 +2,15 @@ namespace LanguageExt.Examples;
 
 public static class AppTest
 {
-    public static Application<string, string> Example =>
+    public static Application<string, string> Example1 =>
         from x in Application<string>.Success(100)
         from y in Application<string>.Success(200)
+        from n in Application<string>.Ask
+        select $"Hello {n}, the answer is: {x + y}";
+    
+    public static Application<string, string> Example2 =>
+        from x in Application<string>.Success(100)
+        from y in Application<string>.Fail<int>(Error.New("failed in example 2"))
         from n in Application<string>.Ask
         select $"Hello {n}, the answer is: {x + y}";
 }

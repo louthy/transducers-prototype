@@ -2,8 +2,11 @@
 using LanguageExt.Examples;
 using static LanguageExt.Transducer;
 
-var result = AppTest.Example.Invoke1("Paul");
-Console.WriteLine(result);
+var result1 = AppTest.Example1.Invoke1("Paul");
+Console.WriteLine(result1);
+
+var result2 = AppTest.Example2.Invoke1("Paul");
+Console.WriteLine(result2);
 
 AsyncTest.Main();
 return;
