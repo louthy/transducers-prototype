@@ -18,25 +18,26 @@ public static class AppTest
 public static class Application<Env>
 {
     public static Application<Env, A> Success<A>(A value) =>
-        new (EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A>.Right(value));
+        new (EitherT<MReaderT<MTry<Env>, Env>, Env, Error, A>.Right(value));
     
     public static Application<Env, A> Fail<A>(Error value) =>
-        new (EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A>.Left(value));
+        new (EitherT<MReaderT<MTry<Env>, Env>, Env, Error, A>.Left(value));
 
-    public static Application<Env, A> Lift<A>(ReaderT<MIO<Env>, Env, A> value) =>
-        new (EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A>.Lift(value.Morphism));
+    public static Application<Env, A> Lift<A>(ReaderT<MTry<Env>, Env, A> value) =>
+        new (EitherT<MReaderT<MTry<Env>, Env>, Env, Error, A>.Lift(value.Morphism));
     
     public static readonly Application<Env, Env> Ask =
-        Lift(MReaderT<MIO<Env>, Env>.Ask);
+        Lift(MReaderT<MTry<Env>, Env>.Ask);
 }
 
-public record Application<Env, A>(EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A> Transformer) : Transducer<Env, Sum<Error, A>>
+public record Application<Env, A>(EitherT<MReaderT<MTry<Env>, Env>, Env, Error, A> Transformer) 
+    : Transducer<Env, Sum<Error, A>>
 {
     public Transducer<Env, Sum<Error, A>> Morphism =>
         Transformer.Morphism;
     
     public static Application<Env, A> Pure(A value) =>
-        new (EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A>.Right(value));
+        new (EitherT<MReaderT<MTry<Env>, Env>, Env, Error, A>.Right(value));
 
     public Application<Env, B> Map<B>(Func<A, B> f) =>
         new (Transformer.MapRight(f));
