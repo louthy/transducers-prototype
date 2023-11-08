@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Diagnostics;
 using static LanguageExt.Transducer;
 using LanguageExt.HKT;
 
@@ -28,6 +29,12 @@ public readonly struct Either<L, R> : KArr<Either<L, R>, Unit, Sum<L, R>>
     
     public static Either<L, R> Left(L value) =>
         new (EitherT<MIdentity, L, R>.Left(value));
+    
+    public static Either<L, R> Lift(Sum<L, R> value) =>
+        new (EitherT<MIdentity, L, R>.Lift(Pure(value)));
+    
+    public static Either<L, R> Lift(Transducer<Unit, Sum<L, R>> value) =>
+        new (EitherT<MIdentity, L, R>.Lift(value));
 
     public Either<L, B> MapRight<B>(Func<R, B> f) =>
         new (transformer.MapRight(f));
@@ -61,6 +68,41 @@ public static class Either
 {
     public static Either<L, R> Flatten<L, R>(this Either<L, Either<L, R>> mma) =>
         mma.Bind(static mx => mx);
+    
+    public static Transducer<Transducer<Unit, Sum<L, A>>, Transducer<Unit, Sum<L, B>>> Bind<L, A, B>(
+        Transducer<A, Transducer<Unit, Sum<L, B>>> f) =>
+        new EitherBind<L, A, B>(f);
+
+    record EitherBind<L, A, B>(Transducer<A, Transducer<Unit, Sum<L, B>>> F) 
+        : Transducer<Transducer<Unit, Sum<L, A>>, Transducer<Unit, Sum<L, B>>>
+    {
+        public Transducer<Transducer<Unit, Sum<L, A>>, Transducer<Unit, Sum<L, B>>> Morphism =>
+            this;
+
+        public Reducer<S, Transducer<Unit, Sum<L, A>>> Transform<S>(Reducer<S, Transducer<Unit, Sum<L, B>>> reduce) =>
+            new Reduce1<S>(F, reduce);
+
+        record Reduce1<S>(Transducer<A, Transducer<Unit, Sum<L, B>>> F, Reducer<S, Transducer<Unit, Sum<L, B>>> Reducer) 
+            : Reducer<S, Transducer<Unit, Sum<L, A>>>
+        {
+            public override TResult<S> Run(TState state, S stateValue, Transducer<Unit, Sum<L, A>> value) =>
+                value.Morphism
+                     .Transform(new Reduce2<S>(F, Reducer))
+                     .Run(state, stateValue, default);
+        }
+
+        record Reduce2<S>(Transducer<A, Transducer<Unit, Sum<L, B>>> F, Reducer<S, Transducer<Unit, Sum<L, B>>> Reducer) 
+            : Reducer<S, Sum<L, A>>
+        {
+            public override TResult<S> Run(TState state, S stateValue, Sum<L, A> value) =>
+                value switch
+                {
+                    SumRight<L, A> r => F.Transform(Reducer).Run(state, stateValue, r.Value),
+                    SumLeft<L, A> l => Reducer.Run(state, stateValue, Pure(Sum<L, B>.Left(l.Value))),
+                    _ => throw new UnreachableException()
+                };
+        }
+    }
 }
 public static class EitherTests
 {
