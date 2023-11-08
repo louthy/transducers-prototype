@@ -4,7 +4,7 @@ namespace LanguageExt;
 
 public static class AsyncTest
 {
-    public static void Main()
+    public static void Run()
     {
         var sw = Stopwatch.StartNew(); 
         var result = TaskAsync<string>.Run(Long, default);

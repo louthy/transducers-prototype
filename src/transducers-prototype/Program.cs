@@ -8,7 +8,7 @@ Console.WriteLine(result2);
 var result1 = AppTest.Example1.Invoke1("Paul");
 Console.WriteLine(result1);
 
-AsyncTest.Main();
+AsyncTest.Run();
 return;
 
 /*

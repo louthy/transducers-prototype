@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Diagnostics.Contracts;
 
 namespace LanguageExt
@@ -16,7 +17,7 @@ namespace LanguageExt
             0;
 
         [Pure]
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             obj is Unit;
 
         [Pure]
