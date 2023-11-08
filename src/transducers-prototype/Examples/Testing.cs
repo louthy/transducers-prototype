@@ -2,7 +2,7 @@ namespace LanguageExt.Examples;
 
 public static class AppTest
 {
-    public static Application<string, string> Run(string env) =>
+    public static Application<string, string> Example =>
         from x in Application<string>.Success(100)
         from y in Application<string>.Success(200)
         from n in Application<string>.Ask
