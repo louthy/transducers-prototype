@@ -14,6 +14,9 @@ record LiftTransducer1<A, B>(Func<A, TResult<B>> F) : Transducer<A, B>
     
     public Transducer<A, B> Morphism =>
         this;
+
+    public override string ToString() =>
+        "lift";
 }
 
 record LiftTransducer2<A>(Func<TResult<A>> F) : Transducer<Unit, A>
@@ -29,6 +32,9 @@ record LiftTransducer2<A>(Func<TResult<A>> F) : Transducer<Unit, A>
     
     public Transducer<Unit, A> Morphism =>
         this;
+
+    public override string ToString() =>
+        "lift";
 }
 
 record LiftTransducer3<A, B>(Func<A, B> F) : Transducer<A, B>
@@ -44,6 +50,10 @@ record LiftTransducer3<A, B>(Func<A, B> F) : Transducer<A, B>
     
     public Transducer<A, B> Morphism =>
         this;
+    
+    public override string ToString() =>
+        "lift";
+
 }
 
 record LiftTransducer4<A>(Func<A> F) : Transducer<Unit, A>
@@ -59,4 +69,7 @@ record LiftTransducer4<A>(Func<A> F) : Transducer<Unit, A>
     
     public Transducer<Unit, A> Morphism =>
         this;
+    
+    public override string ToString() =>
+        "lift";
 }

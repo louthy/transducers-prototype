@@ -2,7 +2,8 @@
 using LanguageExt.Examples;
 using static LanguageExt.Transducer;
 
-Console.WriteLine(AppTest.Run("Paul"));
+var result = AppTest.Example.Invoke1("Paul");
+Console.WriteLine(result);
 
 AsyncTest.Main();
 return;

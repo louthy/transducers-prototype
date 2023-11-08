@@ -14,4 +14,7 @@ record ConstantTransducer<A, B>(B Value) : Transducer<A, B>
 
     public Transducer<A, B> Morphism =>
         this;
+
+    public override string ToString() =>
+        "const";
 }

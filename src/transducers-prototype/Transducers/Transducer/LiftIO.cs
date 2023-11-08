@@ -14,6 +14,9 @@ record LiftIOTransducer1<A, B>(Func<CancellationToken, A, Task<TResult<B>>> F) :
     
     public Transducer<A, B> Morphism =>
         this;
+
+    public override string ToString() =>
+        "liftIO";
 }
 
 record LiftIOTransducer2<A>(Func<CancellationToken, Task<TResult<A>>> F) : Transducer<Unit, A>
@@ -29,6 +32,9 @@ record LiftIOTransducer2<A>(Func<CancellationToken, Task<TResult<A>>> F) : Trans
     
     public Transducer<Unit, A> Morphism =>
         this;
+
+    public override string ToString() =>
+        "liftIO";
 }
 
 record LiftIOTransducer3<A, B>(Func<CancellationToken, A, Task<B>> F) : Transducer<A, B>
@@ -44,6 +50,9 @@ record LiftIOTransducer3<A, B>(Func<CancellationToken, A, Task<B>> F) : Transduc
     
     public Transducer<A, B> Morphism =>
         this;
+
+    public override string ToString() =>
+        "liftIO";
 }
 
 record LiftIOTransducer4<A>(Func<CancellationToken, Task<A>> F) : Transducer<Unit, A>
@@ -59,4 +68,7 @@ record LiftIOTransducer4<A>(Func<CancellationToken, Task<A>> F) : Transducer<Uni
     
     public Transducer<Unit, A> Morphism =>
         this;
+
+    public override string ToString() =>
+        "liftIO";
 }

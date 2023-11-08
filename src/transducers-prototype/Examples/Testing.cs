@@ -24,8 +24,11 @@ public static class Application<Env>
         Lift(ReaderT<MIO<Env>, Env>.Ask);
 }
 
-public record Application<Env, A>(EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A> Transformer) 
+public record Application<Env, A>(EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A> Transformer) : Transducer<Env, Sum<Error, A>>
 {
+    public Transducer<Env, Sum<Error, A>> Morphism =>
+        this;
+    
     public static Application<Env, A> Pure(A value) =>
         new (EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A>.Right(value));
 
@@ -43,4 +46,13 @@ public record Application<Env, A>(EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A
 
     public Application<Env, B> BiMap<B>(Func<Error, Error> Fail, Func<A, B> Succ, Func<B>? Bottom = null) =>
         new(Transformer.BiMap(Fail, Succ));
+
+    public Reducer<S, Env> Transform<S>(Reducer<S, Sum<Error, A>> reduce) =>
+        Reducer.From<S, Env>((st, s, env) =>
+            Transformer.Morphism.Transform(
+                Reducer.From<S, Transducer<Env, Sum<Error, A>>>(
+                    (st1, s1, ta) =>
+                        ta.Transform(Reducer.From<S, Sum<Error, A>>(reduce.Run))
+                          .Run(st1, s1, env)))
+                       .Run(st, s,env));
 }

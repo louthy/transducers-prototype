@@ -14,3 +14,15 @@ public abstract record Reducer<S, A>
     /// </summary>
     public abstract TResult<S> Run(TState state, S stateValue, A value);
 }
+
+public static class Reducer
+{
+    public static Reducer<S, A> From<S, A>(Func<TState, S, A, TResult<S>> f) =>
+        new FReducer<S, A>(f);
+}
+
+record FReducer<S, A>(Func<TState, S, A, TResult<S>> F) : Reducer<S, A>
+{
+    public override TResult<S> Run(TState state, S stateValue, A value) =>
+        F(state, stateValue, value);
+}

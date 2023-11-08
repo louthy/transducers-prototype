@@ -38,6 +38,9 @@ record BiMap<E, X, Y, A, B>(
         public override TResult<S> Run(TState state, S stateValue, Y value) =>
             Reduce.Run(state, stateValue, Sum<Y, B>.Left(value));
     }
+
+    public override string ToString() => 
+        "bimap";
 }
 
 record BiMap2<X, Y, Z, A, B, C>(
@@ -77,6 +80,8 @@ record BiMap2<X, Y, Z, A, B, C>(
             Reduce.Run(state, stateValue, Sum<Z, C>.Left(value));
     }
 
+    public override string ToString() => 
+        "bimap";
 }
 
 record MapRight<E, X, A, B>(Transducer<E, Sum<X, A>> First, Transducer<A, B> Right) : Transducer<E, Sum<X, B>>
@@ -103,6 +108,9 @@ record MapRight<E, X, A, B>(Transducer<E, Sum<X, A>> First, Transducer<A, B> Rig
         public override TResult<S> Run(TState state, S stateValue, B value) =>
             Reduce.Run(state, stateValue, Sum<X, B>.Right(value));
     }
+
+    public override string ToString() => 
+        "mapRight";
 }
 
 record MapRight2<X, Y, A, B, C>(
@@ -131,6 +139,9 @@ record MapRight2<X, Y, A, B, C>(
         public override TResult<S> Run(TState state, S stateValue, C value) =>
             Reduce.Run(state, stateValue, Sum<Y, C>.Right(value));
     }
+
+    public override string ToString() => 
+        "mapRight";
 }
 
 record MapLeft<E, X, Y, A>(Transducer<E, Sum<X, A>> First, Transducer<X, Y> Left) : Transducer<E, Sum<Y, A>>
@@ -157,6 +168,9 @@ record MapLeft<E, X, Y, A>(Transducer<E, Sum<X, A>> First, Transducer<X, Y> Left
         public override TResult<S> Run(TState state, S stateValue, Y value) =>
             Reduce.Run(state, stateValue, Sum<Y, A>.Left(value));
     }
+
+    public override string ToString() => 
+        "mapLeft";
 }
 
 record MapLeft2<X, Y, Z, A, B>(
@@ -185,4 +199,7 @@ record MapLeft2<X, Y, Z, A, B>(
         public override TResult<S> Run(TState state, S stateValue, Z value) =>
             Reduce.Run(state, stateValue, Sum<Z, B>.Left(value));
     }
+
+    public override string ToString() => 
+        "mapLeft";
 }
