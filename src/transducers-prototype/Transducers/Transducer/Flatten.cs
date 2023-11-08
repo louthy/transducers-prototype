@@ -70,39 +70,8 @@ record FlattenSumTransducer1<Env, X, A>(Transducer<Env, Sum<X, Transducer<Env, S
                 SumRight<X, Transducer<Env, Sum<X, A>>> r =>
                     r.Value.Transform(Reducer).Run(state, stateValue, Env),
 
-                SumLeft<X, Transducer<Env, Sum<X, A>>> =>
-                    TResult.Complete(stateValue),
-                
-                _ => throw new UnreachableException()
-            };
-    }    
-}
-record FlattenSumTransducer2<Env, X, Y, A>(Transducer<Env, Sum<X, Transducer<Env, Sum<Y, A>>>> FF) 
-    : Transducer<Env, Sum<Y, A>>
-{
-    public Transducer<Env, Sum<Y, A>> Morphism => 
-        this;
-
-    public Reducer<S, Env> Transform<S>(Reducer<S, Sum<Y, A>> reduce) =>
-        new Reduce0<S>(FF, reduce);
-
-    record Reduce0<S>(Transducer<Env, Sum<X, Transducer<Env, Sum<Y, A>>>> FF, Reducer<S, Sum<Y, A>> Reducer) 
-        : Reducer<S, Env>
-    {
-        public override TResult<S> Run(TState state, S stateValue, Env value) =>
-            FF.Transform(new Reduce<S>(value, Reducer)).Run(state, stateValue, value);
-    }
-
-    record Reduce<S>(Env Env, Reducer<S, Sum<Y, A>> Reducer) : Reducer<S, Sum<X, Transducer<Env, Sum<Y, A>>>>
-    {
-        public override TResult<S> Run(TState state, S stateValue, Sum<X, Transducer<Env, Sum<Y, A>>> value) =>
-            value switch
-            {
-                SumRight<X, Transducer<Env, Sum<Y, A>>> r =>
-                    r.Value.Transform(Reducer).Run(state, stateValue, Env),
-
-                SumLeft<X, Transducer<Env, Sum<Y, A>>> =>
-                    TResult.Complete(stateValue),
+                SumLeft<X, Transducer<Env, Sum<X, A>>> l =>
+                    Reducer.Run(state, stateValue, Sum<X, A>.Left(l.Value)),
                 
                 _ => throw new UnreachableException()
             };

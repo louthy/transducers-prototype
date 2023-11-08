@@ -98,7 +98,7 @@ record MapRight<E, X, A, B>(Transducer<E, Sum<X, A>> First, Transducer<A, B> Rig
             value switch
             {
                 SumRight<X, A> r => Right.Transform(new RightReduce<S>(Reduce)).Run(state, stateValue, r.Value), 
-                SumLeft<X, A> => TResult.Complete(stateValue),
+                SumLeft<X, A> l => Reduce.Run(state, stateValue, Sum<X, B>.Left(l.Value)),
                 _ => throw new UnreachableException()
             };
     }
@@ -129,7 +129,7 @@ record MapRight2<X, Y, A, B, C>(
             value switch
             {
                 SumRight<Y, B> r => Right.Transform(new RightReduce<S>(Reduce)).Run(state, stateValue, r.Value), 
-                SumLeft<Y, B> l => TResult.Complete(stateValue),
+                SumLeft<Y, B> l => Reduce.Run(state, stateValue, Sum<Y, C>.Left(l.Value)),
                 _ => throw new UnreachableException()
             };
     }
@@ -157,7 +157,7 @@ record MapLeft<E, X, Y, A>(Transducer<E, Sum<X, A>> First, Transducer<X, Y> Left
         public override TResult<S> Run(TState state, S stateValue, Sum<X, A> value) =>
             value switch
             {
-                SumRight<X, A> r => TResult.Complete(stateValue), 
+                SumRight<X, A> r => Reduce.Run(state, stateValue, Sum<Y, A>.Right(r.Value)),
                 SumLeft<X, A> l => Left.Transform(new LeftReduce<S>(Reduce)).Run(state, stateValue, l.Value),
                 _ => throw new UnreachableException()
             };
@@ -188,7 +188,7 @@ record MapLeft2<X, Y, Z, A, B>(
         public override TResult<S> Run(TState state, S stateValue, Sum<Y, B> value) =>
             value switch
             {
-                SumRight<Y, B> r => TResult.Complete(stateValue), 
+                SumRight<Y, B> r => Reduce.Run(state, stateValue, Sum<Z, B>.Right(r.Value)),
                 SumLeft<Y, B> l => Left.Transform(new LeftReduce<S>(Reduce)).Run(state, stateValue, l.Value),
                 _ => throw new UnreachableException()
             };

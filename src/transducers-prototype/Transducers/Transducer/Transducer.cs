@@ -21,11 +21,4 @@ public interface Transducer<A, B> : KArr<Any, A, B>
     /// <typeparam name="S">State type</typeparam>
     /// <returns>Reducer that captures the transformation of the `Transducer` and the provided reducer</returns>
     Reducer<S, A> Transform<S>(Reducer<S, B> reduce);
-
-    /// <summary>
-    /// Compose this transducer and the next
-    /// </summary>
-    /// <param name="next">Next transducer</param>
-    /// <returns>Composition of the two transducers</returns>
-    //Transducer<A, C> Compose<C>(Transducer<B, C> next);
 }

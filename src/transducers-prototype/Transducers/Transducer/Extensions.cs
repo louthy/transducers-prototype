@@ -120,18 +120,9 @@ public static partial class Transducer
     /// </summary>
     /// <param name="ff">Nested transducers</param>
     /// <returns>Flattened transducers</returns>
-    public static Transducer<Env, Sum<Y, A>> Flatten<Env, X, Y, A>(
-        this Transducer<Env, Sum<X, Transducer<Env, Sum<Y, A>>>> ff) =>
-        new FlattenSumTransducer2<Env, X, Y, A>(ff);
-    
-    /// <summary>
-    /// Take nested transducers and flatten them
-    /// </summary>
-    /// <param name="ff">Nested transducers</param>
-    /// <returns>Flattened transducers</returns>
-    public static Transducer<Unit, Sum<Y, A>> Flatten<X, Y, A>(
-        this Transducer<Unit, Sum<X, Transducer<Unit, Sum<Y, A>>>> ff) =>
-        new FlattenSumTransducer2<Unit, X, Y, A>(ff);
+    public static Transducer<Env, Sum<X, A>> Flatten<Env, X, A>(
+        this Transducer<Env, Sum<X, Transducer<Env, Sum<X, A>>>> ff) =>
+        new FlattenSumTransducer1<Env, X, A>(ff);
     
 
     /*/// <summary>
