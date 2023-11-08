@@ -9,7 +9,7 @@ public interface Apply<F> : Functor<F>
     /// <summary>
     /// Applicative apply
     /// </summary>
-    public static abstract KArr<F, A, C> Ap<A, B, C>(KArr<F, A, Func<B, C>> f, KArr<F, A, B> x);
+    public static abstract KArr<F, Unit, B> Ap<A, B>(KArr<F, Unit, Func<A, B>> f, KArr<F, Unit, A> x);
 }
 
 /// <summary>

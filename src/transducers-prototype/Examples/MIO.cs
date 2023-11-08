@@ -9,7 +9,7 @@ public record IO<Env, A>(Transducer<Env, A> MorphismValue) :
         MorphismValue;
 }
 
-public readonly struct MIO<Env> : Monad<MIO<Env>, Env>
+public readonly struct MIO<Env> : MonadReader<MIO<Env>, Env>
 {
     public static KArr<MIO<Env>, Env, C> Map<B, C>(KArr<MIO<Env>, Env, B> fab, Transducer<B, C> f) =>
         new IO<Env, C>(Transducer.compose(fab.Morphism, f));

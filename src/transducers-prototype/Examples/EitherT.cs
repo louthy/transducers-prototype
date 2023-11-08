@@ -6,9 +6,8 @@ namespace LanguageExt.Examples;
 /// <summary>
 /// Either transformer
 /// </summary>
-public readonly struct EitherT<M, L, R> : 
-    KArr<M, Unit, Sum<L, R>>
-    where M : Monad<M, Unit>
+public readonly struct EitherT<M, L, R> : KArr<M, Unit, Sum<L, R>>
+    where M : Monad<M>
 {
     readonly Transducer<Unit, Sum<L, R>> morphism;
     
@@ -25,7 +24,10 @@ public readonly struct EitherT<M, L, R> :
         new (M.Pure(Transducer.Pure(Sum<L, R>.Left(value))).Morphism.Flatten());
     
     public static EitherT<M, L, R> Lift(Transducer<Unit, R> ma) =>
-        new (M.Pure(ma.Map(Sum<L, R>.Right)).Morphism.Flatten());
+        Lift(ma.Map(Sum<L, R>.Right));
+    
+    public static EitherT<M, L, R> Lift(Transducer<Unit, Sum<L, R>> ma) =>
+        new (M.Pure(ma).Morphism.Flatten());
     
     public EitherT<M, L, B> MapRight<B>(Func<R, B> f) =>
         new(Morphism.MapRight(f));
@@ -71,7 +73,7 @@ public readonly struct EitherT<M, L, R> :
 /// </summary>
 public readonly struct EitherT<M, Env, L, R>: 
     KArr<M, Env, Sum<L, R>>
-    where M : Monad<M, Env>
+    where M : MonadReader<M, Env>
 {
     readonly Transducer<Env, Sum<L, R>> morphism;
     
@@ -88,7 +90,10 @@ public readonly struct EitherT<M, Env, L, R>:
         new (M.Pure(Transducer.constant<Env, Sum<L, R>>(Sum<L, R>.Left(value))).Morphism.Flatten());
 
     public static EitherT<M, Env, L, R> Lift(Transducer<Env, R> ma) =>
-        new (M.Pure(ma.Map(Sum<L, R>.Right)).Morphism.Flatten());
+        Lift(ma.Map(Sum<L, R>.Right));
+
+    public static EitherT<M, Env, L, R> Lift(Transducer<Env, Sum<L, R>> ma) =>
+        new (M.Pure(ma).Morphism.Flatten());
     
     public EitherT<M, Env, L, B> MapRight<B>(Func<R, B> f) =>
         new(Morphism.MapRight(f));

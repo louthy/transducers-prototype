@@ -9,12 +9,12 @@ public interface Functor<F> where F : Functor<F>
     /// <summary>
     /// Map from `A -> B` to `A -> C` 
     /// </summary>
-    public static abstract KArr<F, A, C> Map<A, B, C>(KArr<F, A, B> fab, Transducer<B, C> f);
+    public static abstract KArr<F, Unit, B> Map<A, B>(KArr<F, Unit, A> fab, Transducer<A, B> f);
 
     /// <summary>
     /// Map from `A -> B` to `A -> C` 
     /// </summary>
-    public static virtual KArr<F, A, C> Map<A, B, C>(KArr<F, A, B> fab, Func<B, C> f) =>
+    public static virtual KArr<F, Unit, B> Map<A, B>(KArr<F, Unit, A> fab, Func<A, B> f) =>
         F.Map(fab, Transducer.lift(f));
 }
 

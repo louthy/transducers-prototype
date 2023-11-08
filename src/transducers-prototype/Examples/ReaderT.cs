@@ -1,23 +1,46 @@
 #nullable enable
 using System.Diagnostics;
-using LanguageExt;
 using LanguageExt.HKT;
 
 namespace LanguageExt.Examples;
 
-public record ReaderT<M, Env>
-    where M : Monad<M, Env>
+/// <summary>
+/// Reader transformer monad instance
+/// </summary>
+/// <typeparam name="M">Monad that wraps the reader behaviour</typeparam>
+/// <typeparam name="Env">Reader environment</typeparam>
+public readonly struct MReaderT<M, Env> : MonadReader<MReaderT<M, Env>, Env>
+    where M : MonadReader<M, Env>
 {
     public static ReaderT<M, Env, A> Pure<A>(A value) =>
         ReaderT<M, Env, A>.Pure(value);
-    
+
     public static readonly ReaderT<M, Env, Env> Ask =
         ReaderT<M, Env, Env>.Lift(Transducer.lift<Env, Env>(e => e));
+    
+    public static KArr<MReaderT<M, Env>, Env, C> Map<B, C>(KArr<MReaderT<M, Env>, Env, B> fab, Transducer<B, C> f) =>
+        Transducer.compose(fab.Morphism, f).Cast<MReaderT<M, Env>, Env, C>();
+
+    public static KArr<MReaderT<M, Env>, Env, B> Lift<B>(Transducer<Env, B> f) =>
+        f.Cast<MReaderT<M, Env>, Env, B>();
+
+    public static KArr<MReaderT<M, Env>, Env, B> Bind<A, B>(
+        KArr<MReaderT<M, Env>, Env, A> mx, 
+        Transducer<A, KArr<MReaderT<M, Env>, Env, B>> f) =>
+        Transducer.compose(mx.Morphism, f.Map(static x => x.Morphism))
+                  .Flatten()
+                  .Cast<MReaderT<M, Env>, Env, B>();
 }
 
+/// <summary>
+/// Reader transformer
+/// </summary>
+/// <typeparam name="M">Monad that wraps the reader behaviour</typeparam>
+/// <typeparam name="Env">Reader environment</typeparam>
+/// <typeparam name="A">Bound value</typeparam>
 public readonly struct ReaderT<M, Env, A>:
     KArr<M, Env, A>
-    where M : Monad<M, Env>
+    where M : MonadReader<M, Env>
 {
     readonly Transducer<Env, A> transformer;
 
@@ -53,24 +76,4 @@ public readonly struct ReaderT<M, Env, A>:
             TFail<A?> fail => fail.Error.Throw<A>(),
             _ => throw new UnreachableException()
         };
-}
-
-public struct MReaderT<M, Env> : Monad<MReaderT<M, Env>, Env>
-    where M : Monad<M, Env>
-{
-    public static KArr<MReaderT<M, Env>, Env, C> Map<B, C>(KArr<MReaderT<M, Env>, Env, B> fab, Transducer<B, C> f) =>
-        new Wrap<Env, C>(Transducer.compose(fab.Morphism, f));
-
-    public static KArr<MReaderT<M, Env>, Env, B> Lift<B>(Transducer<Env, B> f) =>
-        new Wrap<Env, B>(f);
-
-    public static KArr<MReaderT<M, Env>, Env, B> Bind<A, B>(
-        KArr<MReaderT<M, Env>, Env, A> mx, 
-        Transducer<A, KArr<MReaderT<M, Env>, Env, B>> f) =>
-        new Wrap<Env, B>(Transducer.compose(mx.Morphism, f.Map(static x => x.Morphism)).Flatten());
-
-    record Wrap<A, B>(Transducer<A, B> F) : KArr<MReaderT<M, Env>, A, B>
-    {
-        public Transducer<A, B> Morphism => F;
-    }
 }

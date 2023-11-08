@@ -1,10 +1,12 @@
+using LanguageExt.HKT;
+
 namespace LanguageExt.Examples;
 
 public struct Eff<Env, E, A> : Transducer<Env, Sum<E, A>>
 {
     readonly Transducer<Env, Sum<E, A>> morphism;
 
-    Eff(Transducer<Env, Sum<E, A>> morphism) =>
+    internal Eff(Transducer<Env, Sum<E, A>> morphism) =>
         this.morphism = morphism;
     
     public static Eff<Env, E, A> Success(A value) =>

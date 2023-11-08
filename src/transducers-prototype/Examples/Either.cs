@@ -1,8 +1,22 @@
-﻿using static LanguageExt.Transducer;
+﻿#nullable enable
+using static LanguageExt.Transducer;
+using LanguageExt.HKT;
 
 namespace LanguageExt.Examples;
 
-public readonly struct Either<L, R> : Transducer<Unit, Sum<L, R>>
+public struct MEither<M, L> : Monad<MEither<M, L>>
+{
+    public static KArr<MEither<M, L>, Unit, B> Map<A, B>(KArr<MEither<M, L>, Unit, A> fab, Transducer<A, B> f) =>
+        throw new NotImplementedException();
+    
+    public static KArr<MEither<M, L>, Unit, A> Lift<A>(Transducer<Unit, A> f) =>
+        throw new NotImplementedException();
+    
+    public static KArr<MEither<M, L>, Unit, B> Bind<A, B>(KArr<MEither<M, L>, Unit, A> mx, Transducer<A, KArr<MEither<M, L>, Unit, B>> f) =>
+        throw new NotImplementedException();
+}
+
+public readonly struct Either<L, R> : KArr<Either<L, R>, Unit, Sum<L, R>>
 {
     readonly EitherT<MIdentity, L, R> transformer;
 
@@ -37,10 +51,10 @@ public readonly struct Either<L, R> : Transducer<Unit, Sum<L, R>>
         transformer.Match(Left, Right, Bottom);
 
     public Transducer<Unit, Sum<L, R>> Morphism =>
-        transformer.Morphism;
+        transformer.Morphism ?? throw new Exception("Either struct not initialised");
     
     public Reducer<S, Unit> Transform<S>(Reducer<S, Sum<L, R>> reduce) =>
-        transformer.Morphism.Transform(reduce);
+        Morphism.Transform(reduce);
 }
 
 public static class Either
@@ -56,9 +70,8 @@ public static class EitherTests
         var my = Either<string, int>.Right(100);
         var mz = Either<string, int>.Right(200);
         
-        /*var mr = from x in mx 
+        var mr = from x in mx 
                  from y in my
-                 select x + y;*/
-
+                 select x + y;
     }
 }

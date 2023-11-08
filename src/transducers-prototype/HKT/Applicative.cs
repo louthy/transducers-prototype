@@ -9,19 +9,19 @@ public interface Applicative<F> : Functor<F>
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static abstract KArr<F, A, B> Lift<A, B>(Transducer<A, B> f);
+    public static abstract KArr<F, Unit, A> Lift<A>(Transducer<Unit, A> f);
     
     /// <summary>
     /// Lift transducer into applicative
     /// </summary>
-    public static virtual KArr<F, A, B> Lift<A, B>(Func<A, B> f) =>
+    public static virtual KArr<F, Unit, A> Lift<A>(Func<Unit, A> f) =>
         F.Lift(Transducer.lift(f));
 
     /// <summary>
     /// Pure constructor
     /// </summary>
-    public static virtual KArr<F, A, B> Pure<A, B>(B value) =>
-        F.Lift(Transducer.constant<A, B>(value));
+    public static virtual KArr<F, Unit, B> Pure<B>(B value) =>
+        F.Lift(Transducer.constant<Unit, B>(value));
 }
 
 /// <summary>

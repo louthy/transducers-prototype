@@ -27,7 +27,7 @@ public static class Application<Env>
         new (EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A>.Lift(value.Morphism));
     
     public static readonly Application<Env, Env> Ask =
-        Lift(ReaderT<MIO<Env>, Env>.Ask);
+        Lift(MReaderT<MIO<Env>, Env>.Ask);
 }
 
 public record Application<Env, A>(EitherT<MReaderT<MIO<Env>, Env>, Env, Error, A> Transformer) : Transducer<Env, Sum<Error, A>>

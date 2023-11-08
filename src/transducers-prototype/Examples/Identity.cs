@@ -16,7 +16,7 @@ public record Identity<Env, A>(Transducer<Env, A> MorphismValue) :
         MorphismValue;
 }
 
-public readonly struct MIdentity : Monad<MIdentity, Unit>
+public readonly struct MIdentity : Monad<MIdentity>
 {
     public static KArr<MIdentity, Unit, C> Map<B, C>(KArr<MIdentity, Unit, B> fab, Transducer<B, C> f) =>
         new Identity<C>(Transducer.compose(fab.Morphism, f));
@@ -28,7 +28,7 @@ public readonly struct MIdentity : Monad<MIdentity, Unit>
         new Identity<B>(Transducer.compose(mx.Morphism, f.Map(static x => x.Morphism)).Flatten());
 }
 
-public readonly struct MIdentity<Env> : Monad<MIdentity<Env>, Env>
+public readonly struct MIdentity<Env> : MonadReader<MIdentity<Env>, Env>
 {
     public static KArr<MIdentity<Env>, Env, C> Map<B, C>(KArr<MIdentity<Env>, Env, B> fab, Transducer<B, C> f) =>
         new Identity<Env, C>(Transducer.compose(fab.Morphism, f));

@@ -1,9 +1,20 @@
 ﻿#nullable enable
 
+using LanguageExt.Examples;
+using LanguageExt.HKT;
+
 namespace LanguageExt;
 
 public static partial class Transducer
 {
+    record Wrap<M, A, B>(Transducer<A, B> F) : KArr<M, A, B>
+    {
+        public Transducer<A, B> Morphism => F;
+    }
+
+    public static KArr<M, A, B> Cast<M, A, B>(this Transducer<A, B> f) =>
+        new Wrap<M, A, B>(f);
+    
     /// <summary>
     /// Maps every value passing through this transducer
     /// </summary>
