@@ -216,6 +216,22 @@ public static partial class Transducer
         new BindTransducer3<A, B, C>(m, f);
 
     /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static Transducer<A, Sum<X, C>> bind<X, A, B, C>(
+        Transducer<A, Sum<X, B>> m,
+        Func<B, Transducer<A, Sum<X, C>>> f) =>
+        new BindTransducerSum<X, A, B, C>(m, lift(f));
+
+    /// <summary>
+    /// Monadic bind
+    /// </summary>
+    public static Transducer<A, Sum<X, C>> bind<X, A, B, C>(
+        Transducer<A, Sum<X, B>> m,
+        Transducer<B, Transducer<A, Sum<X, C>>> f) =>
+        new BindTransducerSum<X, A, B, C>(m, f);
+
+    /// <summary>
     /// Lifts a unit accepting transducer, ignores the input value.
     /// </summary>
     public static Transducer<A, B> ignore<A, B>(Transducer<Unit, B> m) =>
